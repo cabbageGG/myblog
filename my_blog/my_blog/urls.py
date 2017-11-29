@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from blog.views import IndexView,BlogView
+from blog.views import IndexView,BlogView,BlogEditView, BlogSaveView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',IndexView.as_view(), name="index"),
     url(r'^blog/(?P<blog_id>\d+)/$', BlogView.as_view(), name="blog"),
+    url(r'^blog_edit/(?P<blog_id>\d+)/$', BlogEditView.as_view(), name="blog_edit"),
+    url(r'blog_edit/save/$', BlogSaveView.as_view(), name="blog_save"),
+
 ]

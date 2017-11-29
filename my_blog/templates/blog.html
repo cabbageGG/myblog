@@ -1,6 +1,6 @@
 {% extends '__base__.html' %}
 
-{% block title %}{{ blog.titile }}{% endblock %}
+{% block title %}博客{% endblock %}
 
 {% block beforehead %}
 
@@ -36,12 +36,13 @@
 
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
-            <h2>{{ blog.title }}</h2>
+            <h2>{{ blog.titile }}</h2>
             <p class="uk-article-meta">发表于{{ blog.create_time }}</p>
             <p>{{ blog.content }}</p>
+            <a href="{% url 'blog_edit' blog.id %}">修改博客</a
         </article>
 
-        <hr class="uk-article-divider">
+{#        <hr class="uk-article-divider">#}
 
 {#    {% if user %}#}
 {#        <h3>发表评论</h3>#}
@@ -88,7 +89,7 @@
 {#            {% endfor %}#}
 {#        </ul>#}
 {##}
-{#    </div>#}
+    </div>
 
     <div class="uk-width-medium-1-4">
         <div class="uk-panel uk-panel-box">

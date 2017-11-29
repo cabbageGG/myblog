@@ -1,0 +1,20 @@
+{% extends '__base__.html' %}
+{% block title %} 编辑日志 {% endblock %}
+{% block content %}
+    <from action="{% url 'blog_save' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="blog_id" value="{{ blog.id | default:'0' }}">
+        <label>标题
+            <input type="text" name="title" value="{{ blog.titile }}">
+        </label>
+        <br/>
+        <br/>
+        <label style="vertical-align: top">内容
+            <textarea name="content" cols="150" rows="10">
+                {{ blog.content }}
+            </textarea>
+        </label>
+        <br/>
+        <input type="submit" value="提交" style="margin-left: 900px; margin-top: 20px; width: 80px">
+    </from>
+{% endblock %}
