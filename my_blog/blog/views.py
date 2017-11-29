@@ -37,6 +37,8 @@ class BlogSaveView(View):
         blog.content = content
         blog.create_time = datetime.now()
         blog.save()
-        return render(request, "blog.html", {"blog": blog})
+        # return render(request, "blog.html", {"blog": blog})
+        blogs = models.Blog.objects.all()
+        return render(request, "index.html", {"blogs": blogs})
 
 
