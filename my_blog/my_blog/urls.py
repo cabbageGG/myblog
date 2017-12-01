@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from blog.views import IndexView,BlogView,BlogEditView, BlogSaveView
+import blog.views as view
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$',IndexView.as_view(), name="index"),
-    url(r'^blog/(?P<blog_id>\d+)/$', BlogView.as_view(), name="blog"),
-    url(r'^blog_edit/(?P<blog_id>\d+)/$', BlogEditView.as_view(), name="blog_edit"),
-    url(r'blog_edit/save/$', BlogSaveView.as_view(), name="blog_save"),
+    url(r'^$', view.index, name="index"),
+    url(r'^blog/$',view.blogs, name="blogs"),
+    url(r'^blog/(?P<blog_id>\d+)/$', view.show_blog, name="show_blog"),
+    url(r'^blog/blog_edit/(?P<blog_id>\d+)/$', view.edit_blog, name="edit_blog"),
+    url(r'^blog/save/$', view.save_blog, name="save_blog"),
 
 ]
