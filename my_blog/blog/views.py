@@ -37,4 +37,7 @@ def save_blog(request):
     blog.save()
     return render(request, "blog/blog.html", {"blog": blog})
 
+def delete_blog(request, blog_id):
+    pass
+
 
