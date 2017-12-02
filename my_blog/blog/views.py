@@ -6,21 +6,21 @@ from datetime import datetime
 
 def index(request):
     blogs = models.Blog.objects.all()
-    return render(request, "index.html", {"blogs": blogs})
+    return render(request, "blog/index.html", {"blogs": blogs})
 
 def blogs(request):
     blogs = models.Blog.objects.all()
-    return render(request, "blogs.html", {"blogs": blogs})
+    return render(request, "blog/blogs.html", {"blogs": blogs})
 
 def show_blog(request, blog_id):
     blog = models.Blog.objects.get(pk=blog_id)
-    return render(request, "blog.html", {"blog": blog})
+    return render(request, "blog/blog.html", {"blog": blog})
 
 def edit_blog(request, blog_id):
     if str(blog_id) == '0':
-        return render(request, "blog_edit.html")
+        return render(request, "blog/blog_edit.html")
     blog = models.Blog.objects.get(pk=blog_id)
-    return render(request, "blog_edit.html", {"blog": blog})
+    return render(request, "blog/blog_edit.html", {"blog": blog})
 
 def save_blog(request):
     title = request.POST.get("title", "TITLE")
@@ -29,12 +29,12 @@ def save_blog(request):
     if blog_id == '0':
         models.Blog.objects.create(titile=title, content=content, create_time=datetime.now())
         blogs = models.Blog.objects.all()
-        return render(request, "index.html", {"blogs": blogs})
+        return render(request, "blog/blogs.html", {"blogs": blogs})
     blog = models.Blog.objects.get(pk=blog_id)
     blog.titile = title
     blog.content = content
     blog.create_time = datetime.now()
     blog.save()
-    return render(request, "blog.html", {"blog": blog})
+    return render(request, "blog/blog.html", {"blog": blog})
 
 
