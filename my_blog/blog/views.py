@@ -13,13 +13,13 @@ def blogs(request):
     return render(request, "blog/blogs.html", {"blogs": blogs})
 
 def show_blog(request, blog_id):
-    blog = models.Blog.objects.get(pk=blog_id)
+    blog = models.Blog.objects.get(id=blog_id)
     return render(request, "blog/blog.html", {"blog": blog})
 
 def edit_blog(request, blog_id):
     if str(blog_id) == '0':
         return render(request, "blog/blog_edit.html")
-    blog = models.Blog.objects.get(pk=blog_id)
+    blog = models.Blog.objects.get(id=blog_id)
     return render(request, "blog/blog_edit.html", {"blog": blog})
 
 def save_blog(request):
@@ -30,7 +30,7 @@ def save_blog(request):
         models.Blog.objects.create(titile=title, content=content, create_time=datetime.now())
         blogs = models.Blog.objects.all()
         return render(request, "blog/blogs.html", {"blogs": blogs})
-    blog = models.Blog.objects.get(pk=blog_id)
+    blog = models.Blog.objects.get(id=blog_id)
     blog.titile = title
     blog.content = content
     blog.create_time = datetime.now()
@@ -38,6 +38,8 @@ def save_blog(request):
     return render(request, "blog/blog.html", {"blog": blog})
 
 def delete_blog(request, blog_id):
-    pass
+    models.Blog.objects.filter(id=blog_id).delete()
+    blogs = models.Blog.objects.all()
+    return render(request, "blog/blogs.html", {"blogs": blogs})
 
 
