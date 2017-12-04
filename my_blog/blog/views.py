@@ -16,7 +16,8 @@ def blogs(request):
 
 def show_blog(request, blog_id):
     blog = models.Blog.objects.get(id=blog_id)
-    return render(request, "blog/blog.html", {"blog": blog})
+    comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
+    return render(request, "blog/blog.html", {"blog": blog, "comments":comments})
 
 # def edit_blog(request, blog_id):
 #     if str(blog_id) == '0':

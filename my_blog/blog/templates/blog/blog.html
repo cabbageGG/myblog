@@ -45,7 +45,7 @@
 
         <hr class="uk-article-divider">
 
-    {% if user %}
+    {% if login %}
         <h3>发表评论</h3>
 
         <article class="uk-comment">
@@ -67,6 +67,8 @@
         </article>
 
         <hr class="uk-article-divider">
+    {% else %}
+        <h3><a href="{% url 'blog:signin' %}">登录</a>后发表评论</h3>
     {% endif %}
 
         <h3>最新评论</h3>
@@ -77,9 +79,9 @@
             <li>
                 <article class="uk-comment">
                     <header class="uk-comment-header">
-                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.user_image }}">
-                        <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id == blog.user_id %}(作者){% endif %}</h4>
-                        <p class="uk-comment-meta">{{ comment.created_at }}</p>
+                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.userimg }}">
+                        <h4 class="uk-comment-title">{{ comment.username }} {% if comment.username == "cabbageGG" %}(作者){% endif %}</h4>
+                        <p class="uk-comment-meta">{{ comment.create_time }}</p>
                     </header>
                     <div class="uk-comment-body">
                         <p>{{ comment.content }}</p>
