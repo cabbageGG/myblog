@@ -15,3 +15,4 @@ class User(models.Model):
     passwd = models.CharField(max_length=32, null=True)
 
 
+

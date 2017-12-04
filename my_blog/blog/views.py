@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.views.generic.base import View
 from blog import models
 from datetime import datetime
+from django.http import HttpResponse
 # Create your views here.
 
 def index(request):
@@ -46,4 +48,40 @@ def delete_blog(request, blog_id):
 
 def comment_blog(request, blog_id):
     pass
+
+def signin(request):
+    return render(request, "blog/signin.html")
+
+def register(request):
+    return render(request, "blog/register.html")
+
+def signin_action(request):
+    account = request.POST.get("account", "")
+    password = request.POST.get("password", "")
+    user = models.User.objects.filter(account=account,passwd=password)
+    if user:
+        blogs = models.Blog.objects.all()
+        return render(request, "blog/index.html", {"blogs": blogs})
+    return render(request, "blog/signin.html")
+
+def register_action(request):
+    name = request.POST.get("name", "")
+    account = request.POST.get("account", "")
+    password1 = request.POST.get("password1", "")
+    password2 = request.POST.get("password2", "")
+    if password1 != password2 or password1 == "" or password2 == "":
+        #return render(request, "blog/register.html")
+        return HttpResponse("密码错误")
+    if account:
+        user = models.User.objects.filter(account=account)
+        if user:
+            #return render(request, "blog/register.html")
+            return HttpResponse("用户已存在")
+        else:
+            models.User.objects.create(name=name, account=account, passwd=password1)
+            blogs = models.Blog.objects.all()
+            return render(request, "blog/index.html", {"blogs": blogs})
+    else:
+        #return render(request, "blog/register.html")
+        return HttpResponse("账户为空")
 
