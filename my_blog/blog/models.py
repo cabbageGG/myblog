@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from django.db import models
 
 # Create your models here.
@@ -17,6 +18,16 @@ class User(models.Model):
     passwd = models.CharField(max_length=32, null=True)
     def __unicode__(self):
         return self.name
+
+class Comments(models.Model):
+    username = models.CharField(max_length=32, default="passinger")
+    userimg = models.ImageField(upload_to='head_img', null=True)
+    blog_id = models.IntegerField() #表示他是博客blog_id的评论
+    comment_id = models.IntegerField(default=0) #默认为0，表示他是一条评论; 当有comment_id值时，表示他是评论comment_id的留言
+    content = models.TextField()
+    create_time = models.DateTimeField()
+    def __unicode__(self):
+        return self.username
 
 
 

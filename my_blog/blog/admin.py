@@ -6,6 +6,9 @@ class BlogAdmin(admin.ModelAdmin):
     list_display = ('title', 'create_time')
     search_fields = ('title', 'create_time')
 
-admin.site.register(Blog, BlogAdmin)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('name', 'account')
+    search_fields = ('name', 'account')
 
-admin.site.register(User)
+admin.site.register(Blog, BlogAdmin)
+admin.site.register(User, UserAdmin)
