@@ -48,7 +48,14 @@ def show_blog(request, blog_id):
 #     return render(request, "blog/blogs.html", {"blogs": blogs})
 
 def comment_blog(request, blog_id):
-    pass
+    user_name = request.POST.get("user_name", "游客")
+    blog_id = request.POST.get("blog_id", "1")
+    comment_id = request.POST.get("comment_id", "0")
+    content = request.POST.get("content", "")
+    models.Comments.objects.create(username=user_name, blog_id=blog_id, comment_id=comment_id, content=content, create_time=datetime.now())
+    blog = models.Blog.objects.get(id=blog_id)
+    comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
+    return render(request, "blog/blog.html", {"blog": blog, "comments":comments})
 
 def signin(request):
     return render(request, "blog/signin.html")

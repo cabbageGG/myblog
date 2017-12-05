@@ -45,22 +45,27 @@
 
         <hr class="uk-article-divider">
 
-    {% if login %}
+    {% if user %}
         <h3>发表评论</h3>
 
         <article class="uk-comment">
             <header class="uk-comment-header">
                 <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ user.image }}">
-                <h4 class="uk-comment-title">{{ user.name }}</h4>
+                <h4 class="uk-comment-title">{{ user.name | default:'游客' }}</h4>
             </header>
             <div class="uk-comment-body">
-                <form id="form-comment" class="uk-form">
+                <form id="form-comment" class="uk-form" action="{% url 'blog:comment' blog.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                    <input type="hidden" name="comment_id" value="{{ comment.id | default:'0' }}">
+                    <input type="hidden" name="user_name" value="{{ user.name | default:'游客' }}">
+{#                    <input type="hidden" name="user_img" value="{{ user.image | default:'0' }}">#}
                     <div class="uk-alert uk-alert-danger uk-hidden"></div>
                     <div class="uk-form-row">
-                        <textarea rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
+                        <textarea name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
                     </div>
                     <div class="uk-form-row">
-                        <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-comment"></i> 发表评论</button>
+                        <input type="submit" class="uk-button uk-button-primary" value="发表评论">
                     </div>
                 </form>
             </div>
