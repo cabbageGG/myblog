@@ -16,7 +16,7 @@
         <article class="uk-article">
             <h2><a href="/blog/page/{{ blog.id }}">{{ blog.title }}</a></h2>
             <p class="uk-article-meta">last modify: {{ blog.create_time }}</p>
-            <p>{{ blog.summary }}</p>
+            <p>{{ blog.summary | linebreaksbr }}</p>
             <p><a href="/blog/page/{{ blog.id }}">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
         </article>
         <hr class="uk-article-divider">
