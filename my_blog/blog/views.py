@@ -6,10 +6,10 @@ from django.http import HttpResponseRedirect
 # Create your views here.
 
 def index(request):
-    blogs = models.Blog.objects.all()
-    return render(request, "blog/index.html", {"blogs": blogs})
-
-def blogs(request):
+    userinfo = ""
+    account = request.COOKIES.get("account","")
+    if account:
+        userinfo = models.User.objects.filter(account=account)[0]
     page = int(request.GET.get("p", "1"))
     first = (page - 1)*10
     end = first + 10
@@ -24,12 +24,37 @@ def blogs(request):
     blogs = blogs[first:end]
     page = page - 1
 
-    return render(request, "blog/blogs.html", {"blogs": blogs, "page":page, "page_nums":page_nums})
+    return render(request, "blog/index.html", {"blogs": blogs, "page":page, "page_nums":page_nums, "userinfo":userinfo})
+
+def blogs(request):
+    userinfo = ""
+    account = request.COOKIES.get("account","")
+    if account:
+        userinfo = models.User.objects.filter(account=account)[0]
+    page = int(request.GET.get("p", "1"))
+    first = (page - 1)*10
+    end = first + 10
+    blogs = models.Blog.objects.all()
+    total_nums = len(blogs)
+    if (total_nums % 10) > 0:
+        page_nums = int(total_nums/10) + 1
+    else:
+        page_nums = int(total_nums/10)
+
+    page_nums = range(0, page_nums)
+    blogs = blogs[first:end]
+    page = page - 1
+
+    return render(request, "blog/blogs.html", {"blogs": blogs, "page":page, "page_nums":page_nums, "userinfo":userinfo})
 
 def show_blog(request, blog_id):
+    userinfo = ""
+    account = request.COOKIES.get("account","")
+    if account:
+        userinfo = models.User.objects.filter(account=account)[0]
     blog = models.Blog.objects.get(id=blog_id)
     comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
-    return render(request, "blog/blog.html", {"blog": blog, "comments":comments})
+    return render(request, "blog/blog.html", {"blog": blog, "comments":comments, "userinfo":userinfo})
 
 def comment_blog(request, blog_id):
     user_name = request.POST.get("user_name", "游客")
@@ -49,6 +74,11 @@ def signin(request):
 def register(request):
     return render(request, "blog/register.html")
 
+def signout(request):
+    response = HttpResponseRedirect('/')
+    response.delete_cookie(key="account")
+    return response
+
 def signin_action(request):
     account = request.POST.get("account", "")
     password = request.POST.get("password", "")
@@ -57,7 +87,7 @@ def signin_action(request):
         response = HttpResponseRedirect("/blog")
         response.set_cookie(key='account', value=account, expires=3600)
         return response
-    return render(request, "blog/signin.html", {"login_fail":True})
+    return render(request, "blog/signin.html", {"msg":"登录失败"})
 
 def register_action(request):
     name = request.POST.get("name", "")

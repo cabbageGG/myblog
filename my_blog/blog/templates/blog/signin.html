@@ -60,7 +60,7 @@
                 <div class="uk-form-row">
                     <div class="uk-form-icon uk-width-1-1">
                         <i class="uk-icon-envelope-o"></i>
-                        <input name="account" type="text" placeholder="账户" maxlength="50" class="uk-width-1-1 uk-form-large">
+                        <input name="account" type="text" placeholder="邮箱" maxlength="50" class="uk-width-1-1 uk-form-large">
                     </div>
                 </div>
                 <div class="uk-form-row">
@@ -75,8 +75,8 @@
                 <div class="uk-form-row uk-text-small">
                     <label class="uk-float-left"><input v-model="remember" type="checkbox"> 记住我</label>
                 </div>
-                {% if login_fail %}
-                    <p>登录失败</p>
+                {% if msg %}
+                    <p>{{ msg }}</p>
                 {% endif %}
             </form>
         </div>

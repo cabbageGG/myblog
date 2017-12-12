@@ -92,6 +92,9 @@ $(function () {
             <div class="uk-form-row">
                 <input type="submit" class="uk-button uk-button-primary" value="注册">
             </div>
+            {% if msg %}
+                <p>{{ msg }}</p>
+            {% endif %}
         </form>
     </div>
 

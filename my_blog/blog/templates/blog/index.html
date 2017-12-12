@@ -16,11 +16,20 @@
         <article class="uk-article">
             <h2><a href="/blog/page/{{ blog.id }}">{{ blog.title }}</a></h2>
             <p class="uk-article-meta">last modify: {{ blog.create_time }}</p>
-            <p>{{ blog.summary }}</p>
+            <p>{{ blog.summary | linebreaksbr }}</p>
             <p><a href="/blog/page/{{ blog.id }}">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
         </article>
         <hr class="uk-article-divider">
     {% endfor %}
+        <div class="page">
+        {% for page_num in page_nums %}
+            {% if page_num == page %}
+                <span>{{ page_num|add:"1" }}&nbsp;&nbsp;</span>
+            {% else %}
+                <a href="?p={{ page_num|add:"1" }}"><span>{{ page_num|add:"1" }}&nbsp;&nbsp;</span></a>
+            {% endif %}
+        {% endfor %}
+        </div>
     </div>
 
     <div class="uk-width-medium-1-4">
@@ -29,9 +38,6 @@
             <ul class="uk-list uk-list-line">
                 <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="https://github.com/cabbageGG">编程</a></li>
                 <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://blog.jobbole.com/all-posts/">读书</a></li>
-{#                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="{% url 'blog:edit_blog' 0 %}">新建博客</a></li>#}
-{#                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="{% url 'blog:signin' %}">登陆</a></li>#}
-{#                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="{% url 'blog:register' %}">注册</a></li>#}
             </ul>
         </div>
     </div>
