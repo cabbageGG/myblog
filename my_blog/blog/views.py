@@ -103,8 +103,23 @@ def register_action(request):
         if user:
             return render(request, "blog/register.html", {"msg":"用户已存在"})
         else:
-            models.User.objects.create(name=name, account=account, passwd=password1)
+            models.User.objects.create(name=name, account=account, passwd=password1, image="")
             return HttpResponseRedirect('/blog')
     else:
         return render(request, "blog/register.html", {"msg":"账户为空"})
+
+def uploadImg(request):
+    userinfo = ""
+    account = request.COOKIES.get("account","")
+    if account:
+        userinfo = models.User.objects.filter(account=account)[0]
+    if request.method == 'POST':
+        username = request.POST.get("username", "")
+        if username:
+            user = models.User.objects.filter(name=username)[0]
+            user.image = request.FILES.get('img')
+            user.save()
+            return HttpResponseRedirect('/')
+        return render(request, "blog/uploadImg.html", {"userinfo": userinfo, "msg": "error, username not found!"})
+    return render(request, "blog/uploadImg.html",{"userinfo":userinfo})
 

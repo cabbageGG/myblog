@@ -1,0 +1,14 @@
+{% extends '__base__.html' %}
+
+{% block title %}首页{% endblock %}
+{% block content %}
+        <form method="POST" enctype="multipart/form-data" action="{% url "blog:uploadImg" %}">
+            {% csrf_token %}
+            <input type="file" name="img">
+            <input type="hidden" name="username" value="{{ userinfo.name }}">
+            <button type="submit">上传</button>
+            {% if msg %}
+               <p>{{ msg }}</p>
+            {% endif %}
+        </form>
+{% endblock %}

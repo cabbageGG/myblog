@@ -48,7 +48,7 @@
 
         <article class="uk-comment">
             <header class="uk-comment-header">
-                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ user.image }}">
+                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{% if userinfo.image %}{{ userinfo.image.url }} {% else %} /media/img/default.jpg {% endif %}">
                 <h4 class="uk-comment-title">{{ userinfo.name | default:'游客' }}</h4>
             </header>
             <div class="uk-comment-body">
@@ -56,8 +56,8 @@
                     {% csrf_token %}
                     <input type="hidden" name="blog_id" value="{{ blog.id }}">
                     <input type="hidden" name="comment_id" value="{{ comment.id | default:'0' }}">
-                    <input type="hidden" name="user_name" value="{{ user.name | default:'游客' }}">
-{#                    <input type="hidden" name="user_img" value="{{ user.image | default:'0' }}">#}
+                    <input type="hidden" name="user_name" value="{{ userinfo.name | default:'游客' }}">
+                    <input type="hidden" name="user_img" value="{{ userinfo.image | default:"img/default.jpg" }}">
                     <div class="uk-alert uk-alert-danger uk-hidden"></div>
                     <div class="uk-form-row">
                         <textarea name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
@@ -82,7 +82,7 @@
             <li>
                 <article class="uk-comment">
                     <header class="uk-comment-header">
-                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.userimg }}">
+                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{% if comment.userimage %}{{ comment.userimage.url }} {% else %} /media/img/default.jpg {% endif %}">
                         <h4 class="uk-comment-title">{{ comment.username }} {% if comment.username == "cabbageGG" %}(作者){% endif %}</h4>
                         <p class="uk-comment-meta">{{ comment.create_time }}</p>
                     </header>
@@ -102,7 +102,15 @@
     <div class="uk-width-medium-1-4">
         <div class="uk-panel uk-panel-box">
             <div class="uk-text-center">
-                <img class="uk-border-circle" width="120" height="120" src="/media/img/test.jpg">
+                <img class="uk-border-circle" width="120" height="120" src="{% if userinfo.image %}{{ userinfo.image.url }} {% else %} /media/img/default.jpg {% endif %}">
+{#                {% if userinfo %}#}
+{#                    <form method="POST" enctype="multipart/form-data" action="{% url "blog:uploadImg" %}">#}
+{#                    {% csrf_token %}#}
+{#                    <input type="file" name="img">#}
+{#                    <input type="hidden" name="username" value="{{ userinfo.name }}">#}
+{#                    <button type="submit">上传</button>#}
+{#                    </form>#}
+{#                {% endif %}#}
             </div>
         </div>
         <div class="uk-panel uk-panel-header">

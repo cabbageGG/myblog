@@ -35,7 +35,8 @@
                         <a href="#0"><i class="uk-icon-user"></i> {{ userinfo.name }}</a>
                         <div class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
-                                <li><a href="/blog/signout"><i class="uk-icon-sign-out"></i> 登出</a></li>
+                                <li><a href="{% url 'blog:signout' %}"><i class="uk-icon-sign-out"></i> 登出</a></li>
+                                <li><a href="{% url 'blog:uploadImg' %}"><i class="uk-icon-sign-out"></i>上传头像</a></li>
                             </ul>
                         </div>
                     </li>
