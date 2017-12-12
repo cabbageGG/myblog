@@ -23,7 +23,11 @@
     {% endfor %}
         <div class="page">
         {% for page_num in page_nums %}
-            <a href="?p={{ page_num|add:"1" }}">{{ page_num|add:"1" }}&nbsp;&nbsp;</a>
+            {% if page_num == page %}
+                <span>{{ page_num|add:"1" }}&nbsp;&nbsp;</span>
+            {% else %}
+                <a href="?p={{ page_num|add:"1" }}"><span>{{ page_num|add:"1" }}&nbsp;&nbsp;</span></a>
+            {% endif %}
         {% endfor %}
         </div>
     </div>

@@ -23,6 +23,7 @@ def blogs(request):
 
     page_nums = range(0, page_nums)
     blogs = blogs[first:end]
+    page = page - 1
 
     return render(request, "blog/blogs.html", {"blogs": blogs, "page":page, "page_nums":page_nums})
 
