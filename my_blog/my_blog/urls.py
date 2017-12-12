@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 import blog.views as view
+from django.contrib.staticfiles.urls import static
+from my_blog import settings
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -23,3 +25,5 @@ urlpatterns = [
     url(r'^blog/', include('blog.urls', namespace="blog"))
 
 ]
+
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
