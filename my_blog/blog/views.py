@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.generic.base import View
 from blog import models
 from datetime import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 
 def index(request):
@@ -81,8 +81,7 @@ def signin_action(request):
     password = request.POST.get("password", "")
     user = models.User.objects.filter(account=account,passwd=password)
     if user:
-        blogs = models.Blog.objects.all()
-        return render(request, "blog/index.html", {"blogs": blogs})
+        return HttpResponseRedirect('/blog')
     return render(request, "blog/signin.html")
 
 def register_action(request):
@@ -100,8 +99,7 @@ def register_action(request):
             return HttpResponse("用户已存在")
         else:
             models.User.objects.create(name=name, account=account, passwd=password1)
-            blogs = models.Blog.objects.all()
-            return render(request, "blog/index.html", {"blogs": blogs})
+            return HttpResponseRedirect('/blog')
     else:
         #return render(request, "blog/register.html")
         return HttpResponse("账户为空")
