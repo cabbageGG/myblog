@@ -11,8 +11,20 @@ def index(request):
     return render(request, "blog/index.html", {"blogs": blogs})
 
 def blogs(request):
+    page = int(request.GET.get("p", "1"))
+    first = (page - 1)*10
+    end = first + 10
     blogs = models.Blog.objects.all()
-    return render(request, "blog/blogs.html", {"blogs": blogs})
+    total_nums = len(blogs)
+    if (total_nums % 10) > 0:
+        page_nums = int(total_nums/10) + 1
+    else:
+        page_nums = int(total_nums/10)
+
+    page_nums = range(0, page_nums)
+    blogs = blogs[first:end]
+
+    return render(request, "blog/blogs.html", {"blogs": blogs, "page":page, "page_nums":page_nums})
 
 def show_blog(request, blog_id):
     blog = models.Blog.objects.get(id=blog_id)

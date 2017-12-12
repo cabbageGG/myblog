@@ -21,6 +21,11 @@
         </article>
         <hr class="uk-article-divider">
     {% endfor %}
+        <div class="page">
+        {% for page_num in page_nums %}
+            <a href="?p={{ page_num|add:"1" }}">{{ page_num|add:"1" }}&nbsp;&nbsp;</a>
+        {% endfor %}
+        </div>
     </div>
 
     <div class="uk-width-medium-1-4">
