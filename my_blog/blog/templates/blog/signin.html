@@ -75,6 +75,9 @@
                 <div class="uk-form-row uk-text-small">
                     <label class="uk-float-left"><input v-model="remember" type="checkbox"> 记住我</label>
                 </div>
+                {% if login_fail %}
+                    <p>登录失败</p>
+                {% endif %}
             </form>
         </div>
     </div>
