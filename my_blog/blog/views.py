@@ -9,7 +9,9 @@ def index(request):
     userinfo = ""
     account = request.COOKIES.get("account","")
     if account:
-        userinfo = models.User.objects.filter(account=account)[0]
+        userinfo = models.User.objects.filter(account=account)
+        if userinfo:
+            userinfo = userinfo[0]
     page = int(request.GET.get("p", "1"))
     first = (page - 1)*10
     end = first + 10
@@ -30,7 +32,9 @@ def blogs(request):
     userinfo = ""
     account = request.COOKIES.get("account","")
     if account:
-        userinfo = models.User.objects.filter(account=account)[0]
+        userinfo = models.User.objects.filter(account=account)
+        if userinfo:
+            userinfo = userinfo[0]
     page = int(request.GET.get("p", "1"))
     first = (page - 1)*10
     end = first + 10
@@ -51,7 +55,9 @@ def show_blog(request, blog_id):
     userinfo = ""
     account = request.COOKIES.get("account","")
     if account:
-        userinfo = models.User.objects.filter(account=account)[0]
+        userinfo = models.User.objects.filter(account=account)
+        if userinfo:
+            userinfo = userinfo[0]
     blog = models.Blog.objects.get(id=blog_id)
     comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
     return render(request, "blog/blog.html", {"blog": blog, "comments":comments, "userinfo":userinfo})
@@ -61,7 +67,8 @@ def comment_blog(request, blog_id):
     account = request.COOKIES.get("account","")
     if account:
         user = models.User.objects.filter(account=account)
-        user_name = user[0].name
+        if user:
+            user_name = user[0].name
     blog_id = request.POST.get("blog_id", "1")
     comment_id = request.POST.get("comment_id", "0")
     content = request.POST.get("content", "")
@@ -112,11 +119,15 @@ def uploadImg(request):
     userinfo = ""
     account = request.COOKIES.get("account","")
     if account:
-        userinfo = models.User.objects.filter(account=account)[0]
+        userinfo = models.User.objects.filter(account=account)
+        if userinfo:
+            userinfo = userinfo[0]
     if request.method == 'POST':
         username = request.POST.get("username", "")
         if username:
-            user = models.User.objects.filter(name=username)[0]
+            user = models.User.objects.filter(name=username)
+            if user:
+                user = user[0]
             user.image = request.FILES.get('img')
             user.save()
             return HttpResponseRedirect('/')
