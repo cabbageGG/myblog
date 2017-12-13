@@ -6,15 +6,15 @@
 
 <script>
 
-function validateEmail(email) {
-    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
-    return re.test(email.toLowerCase());
-}
+{#function validateEmail(email) {#}
+{#    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;#}
+{#    return re.test(email.toLowerCase());#}
+{# }#}
 
 {#function ajaxLog(s) {#}
 {#    alert(s)#}
 {# }#}
-
+{##}
 {#$(function () {#}
 {#    $('#form-register').submit(function () {#}
 {#        alert('表单数据预处理');#}
@@ -38,7 +38,7 @@ function validateEmail(email) {
 {#            alert('两次输入的口令不一致');#}
 {#            return;#}
 {#        }#}
-{#        $.post('{% url 'blog:register' %}',{#}
+{#        $.get('{% url 'blog:register' %}',{#}
 {#            name:name,#}
 {#            account:account,#}
 {#            password1:CryptoJS.MD5(password1).toString(),#}

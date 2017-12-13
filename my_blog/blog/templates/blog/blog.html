@@ -103,14 +103,6 @@
         <div class="uk-panel uk-panel-box">
             <div class="uk-text-center">
                 <img class="uk-border-circle" width="120" height="120" src="{% if userinfo.image %}{{ userinfo.image.url }} {% else %} /media/img/default.jpg {% endif %}">
-{#                {% if userinfo %}#}
-{#                    <form method="POST" enctype="multipart/form-data" action="{% url "blog:uploadImg" %}">#}
-{#                    {% csrf_token %}#}
-{#                    <input type="file" name="img">#}
-{#                    <input type="hidden" name="username" value="{{ userinfo.name }}">#}
-{#                    <button type="submit">上传</button>#}
-{#                    </form>#}
-{#                {% endif %}#}
             </div>
         </div>
         <div class="uk-panel uk-panel-header">

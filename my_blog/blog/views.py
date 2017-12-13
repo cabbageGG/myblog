@@ -3,8 +3,17 @@ from django.shortcuts import render
 from blog import models
 from datetime import datetime
 from django.http import HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt  #当使用ajax发送post请求时，需要加上@csrf_exempt装饰器
 # Create your views here.
+
+import hashlib
+
+def get_md5(value):
+    m = hashlib.md5()
+    if isinstance(value, str):
+        value = value.encode('utf-8')
+    m.update(value)
+    return m.hexdigest()
 
 def index(request):
     userinfo = ""
@@ -80,6 +89,8 @@ def signin(request):
     if request.method == 'POST':
         account = request.POST.get("account", "")
         password = request.POST.get("password", "")
+        if account and password:
+            password = get_md5(password)
         user = models.User.objects.filter(account=account, passwd=password)
         if user:
             response = HttpResponseRedirect("/blog")
@@ -99,12 +110,18 @@ def register(request):
         if password1 != password2:
             return render(request, "blog/register.html", {"msg": "两次密码不相同"})
         if account:
-            user = models.User.objects.filter(account=account)
-            if user:
-                return render(request, "blog/register.html", {"msg": "用户已存在"})
+            user1 = models.User.objects.filter(account=account)
+            user2 = models.User.objects.filter(name=name)
+            if user1:
+                return render(request, "blog/register.html", {"msg": "账户已存在"})
+            elif user2:
+                return render(request, "blog/register.html", {"msg": "用户名已存在"})
             else:
-                models.User.objects.create(name=name, account=account, passwd=password1, image="")
-                return HttpResponseRedirect('/blog')
+                password = get_md5(password1)
+                models.User.objects.create(name=name, account=account, passwd=password, image="")
+                response = HttpResponseRedirect("/blog")
+                response.set_cookie(key='account', value=account, expires=3600)
+                return response
         else:
             return render(request, "blog/register.html", {"msg": "账户为空"})
     return render(request, "blog/register.html")
@@ -133,5 +150,3 @@ def uploadImg(request):
         return render(request, "blog/uploadImg.html", {"userinfo": userinfo, "msg": "error, username not found!"})
     return render(request, "blog/uploadImg.html",{"userinfo":userinfo})
 
-def testAjax(request):
-    pass
