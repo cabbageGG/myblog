@@ -132,3 +132,5 @@ def uploadImg(request):
         return render(request, "blog/uploadImg.html", {"userinfo": userinfo, "msg": "error, username not found!"})
     return render(request, "blog/uploadImg.html",{"userinfo":userinfo})
 
+def testAjax(request):
+    pass

@@ -11,48 +11,50 @@ function validateEmail(email) {
     return re.test(email.toLowerCase());
 }
 
+function ajaxLog(s) {
+    alert(s)
+}
+
 $(function () {
-    var vm = new Vue({
-        el: '#form-register',
-        data: {
-            name: '',
-            email: '',
-            password1: '',
-            password2: ''
-        },
-        methods: {
-            submit: function (event) {
-                event.preventDefault();
-                if (! this.name.trim()) {
-                    return showError('请输入名字');
-                }
-                if (! validateEmail(this.email.trim().toLowerCase())) {
-                    return showError('请输入正确的Email地址');
-                }
-                if (this.password1.length < 6) {
-                    return showError('口令长度至少为6个字符');
-                }
-                if (this.password1 !== this.password2) {
-                    return showError('两次输入的口令不一致');
-                }
-                startLoading();
-                postApi('/api/users', {
-                    name: this.name,
-                    email: this.email.trim().toLowerCase(),
-                    password: CryptoJS.MD5(this.password1).toString(),
-                }, function (err, r) {
-                    if (err) {
-                        showError(err);
-                    }
-                    else {
-                        return location.assign('/');
-                    }
-                    stopLoading();
-                });
-            }
+    $('#form-register').submit(function () {
+        alert('表单数据预处理');
+        var name = $('#name').val();
+        var account = $('#account').val();
+        var password1 = $('#password1').val();
+        var password2 = $('#password2').val();
+        if (! name.trim()){
+            alert('请输入名字');
+            return;
         }
-    });
-});
+        if (! validateEmail(account.trim().toLowerCase())) {
+            alert('请输入正确的Email地址');
+            return;
+        }
+        if (password1.length < 6) {
+            alert('口令长度至少为6个字符');
+            return;
+        }
+        if (password1 !== password2) {
+            alert('两次输入的口令不一致');
+            return;
+        }
+        $.post('/blog/register',{
+            name:name,
+            account:account,
+            password1:CryptoJS.MD5(this.password1).toString(),
+            password2:CryptoJS.MD5(this.password1).toString(),
+        })
+{#            .done(function (data) {#}
+{#            ajaxLog('成功, 收到的数据: ' + JSON.stringify(data));#}
+{#            }).fail(function (xhr, status) {#}
+{#                ajaxLog('失败: ' + xhr.status + ', 原因: ' + status);#}
+{#            }).always(function () {#}
+{#                ajaxLog('请求完成: 无论成功或失败都会调用');#}
+{#        })#}
+        alert('end')
+    })
+})
+
 
 </script>
 
@@ -62,31 +64,31 @@ $(function () {
 
     <div class="uk-width-2-3">
         <h1>欢迎注册！</h1>
-        <form id="form-register" action="{% url 'blog:register' %}" class="uk-form uk-form-stacked" method="post">
+        <form id="form-register" class="uk-form uk-form-stacked" action="{% url 'blog:register' %}" method="post">
             {% csrf_token %}
             <div class="uk-alert uk-alert-danger uk-hidden"></div>
             <div class="uk-form-row">
                 <label class="uk-form-label">名字:</label>
                 <div class="uk-form-controls">
-                    <input name="name" type="text" maxlength="50" placeholder="名字" class="uk-width-1-1">
+                    <input id="name" name="name" type="text" maxlength="50" placeholder="名字" class="uk-width-1-1">
                 </div>
             </div>
             <div class="uk-form-row">
                 <label class="uk-form-label">电子邮件:</label>
                 <div class="uk-form-controls">
-                    <input name="account" type="text" maxlength="50" placeholder="your-name@example.com" class="uk-width-1-1">
+                    <input id="account" name="account" type="text" maxlength="50" placeholder="your-name@example.com" class="uk-width-1-1">
                 </div>
             </div>
             <div class="uk-form-row">
                 <label class="uk-form-label">输入口令:</label>
                 <div class="uk-form-controls">
-                    <input name="password1" type="password" maxlength="50" placeholder="输入口令" class="uk-width-1-1">
+                    <input id="password1" name="password1" type="password" maxlength="50" placeholder="输入口令" class="uk-width-1-1">
                 </div>
             </div>
             <div class="uk-form-row">
                 <label class="uk-form-label">重复口令:</label>
                 <div class="uk-form-controls">
-                    <input name="password2" type="password" maxlength="50" placeholder="重复口令" class="uk-width-1-1">
+                    <input id="password2" name="password2" type="password" maxlength="50" placeholder="重复口令" class="uk-width-1-1">
                 </div>
             </div>
             <div class="uk-form-row">
