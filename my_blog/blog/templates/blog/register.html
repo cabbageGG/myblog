@@ -11,49 +11,49 @@ function validateEmail(email) {
     return re.test(email.toLowerCase());
 }
 
-function ajaxLog(s) {
-    alert(s)
-}
+{#function ajaxLog(s) {#}
+{#    alert(s)#}
+{# }#}
 
-$(function () {
-    $('#form-register').submit(function () {
-        alert('表单数据预处理');
-        var name = $('#name').val();
-        var account = $('#account').val();
-        var password1 = $('#password1').val();
-        var password2 = $('#password2').val();
-        if (! name.trim()){
-            alert('请输入名字');
-            return;
-        }
-        if (! validateEmail(account.trim().toLowerCase())) {
-            alert('请输入正确的Email地址');
-            return;
-        }
-        if (password1.length < 6) {
-            alert('口令长度至少为6个字符');
-            return;
-        }
-        if (password1 !== password2) {
-            alert('两次输入的口令不一致');
-            return;
-        }
-        $.post('/blog/register',{
-            name:name,
-            account:account,
-            password1:CryptoJS.MD5(this.password1).toString(),
-            password2:CryptoJS.MD5(this.password1).toString(),
-        })
-{#            .done(function (data) {#}
+{#$(function () {#}
+{#    $('#form-register').submit(function () {#}
+{#        alert('表单数据预处理');#}
+{#        var name = $('#name').val();#}
+{#        var account = $('#account').val();#}
+{#        var password1 = $('#password1').val();#}
+{#        var password2 = $('#password2').val();#}
+{#        if (! name.trim()){#}
+{#            alert('请输入名字');#}
+{#            return;#}
+{#        }#}
+{#        if (! validateEmail(account.trim().toLowerCase())) {#}
+{#            alert('请输入正确的Email地址');#}
+{#            return;#}
+{#        }#}
+{#        if (password1.length < 6) {#}
+{#            alert('口令长度至少为6个字符');#}
+{#            return;#}
+{#        }#}
+{#        if (password1 !== password2) {#}
+{#            alert('两次输入的口令不一致');#}
+{#            return;#}
+{#        }#}
+{#        $.post('{% url 'blog:register' %}',{#}
+{#            name:name,#}
+{#            account:account,#}
+{#            password1:CryptoJS.MD5(password1).toString(),#}
+{#            password2:CryptoJS.MD5(password2).toString(),#}
+{#        }).done(function (data) {#}
 {#            ajaxLog('成功, 收到的数据: ' + JSON.stringify(data));#}
+{#            return location.assign('/');#}
 {#            }).fail(function (xhr, status) {#}
 {#                ajaxLog('失败: ' + xhr.status + ', 原因: ' + status);#}
 {#            }).always(function () {#}
 {#                ajaxLog('请求完成: 无论成功或失败都会调用');#}
-{#        })#}
-        alert('end')
-    })
-})
+{#        });#}
+{#        alert('end');#}
+{#    })#}
+{#{)#}
 
 
 </script>
