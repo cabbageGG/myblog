@@ -76,44 +76,42 @@ def comment_blog(request, blog_id):
     return HttpResponseRedirect("/blog/page/%s" % blog_id)
 
 def signin(request):
+    if request.method == 'POST':
+        account = request.POST.get("account", "")
+        password = request.POST.get("password", "")
+        user = models.User.objects.filter(account=account, passwd=password)
+        if user:
+            response = HttpResponseRedirect("/blog")
+            response.set_cookie(key='account', value=account, expires=3600)
+            return response
+        return render(request, "blog/signin.html", {"msg": "登录失败"})
     return render(request, "blog/signin.html")
 
 def register(request):
+    if request.method == 'POST':
+        name = request.POST.get("name", "")
+        account = request.POST.get("account", "")
+        password1 = request.POST.get("password1", "")
+        password2 = request.POST.get("password2", "")
+        if password1 == "" or password2 == "":
+            return render(request, "blog/register.html", {"msg": "密码不能为空"})
+        if password1 != password2:
+            return render(request, "blog/register.html", {"msg": "两次密码不相同"})
+        if account:
+            user = models.User.objects.filter(account=account)
+            if user:
+                return render(request, "blog/register.html", {"msg": "用户已存在"})
+            else:
+                models.User.objects.create(name=name, account=account, passwd=password1, image="")
+                return HttpResponseRedirect('/blog')
+        else:
+            return render(request, "blog/register.html", {"msg": "账户为空"})
     return render(request, "blog/register.html")
 
 def signout(request):
     response = HttpResponseRedirect('/')
     response.delete_cookie(key="account")
     return response
-
-def signin_action(request):
-    account = request.POST.get("account", "")
-    password = request.POST.get("password", "")
-    user = models.User.objects.filter(account=account,passwd=password)
-    if user:
-        response = HttpResponseRedirect("/blog")
-        response.set_cookie(key='account', value=account, expires=3600)
-        return response
-    return render(request, "blog/signin.html", {"msg":"登录失败"})
-
-def register_action(request):
-    name = request.POST.get("name", "")
-    account = request.POST.get("account", "")
-    password1 = request.POST.get("password1", "")
-    password2 = request.POST.get("password2", "")
-    if  password1 == "" or password2 == "":
-        return render(request, "blog/register.html",{"msg":"密码不能为空"})
-    if password1 != password2:
-        return render(request, "blog/register.html", {"msg": "两次密码不相同"})
-    if account:
-        user = models.User.objects.filter(account=account)
-        if user:
-            return render(request, "blog/register.html", {"msg":"用户已存在"})
-        else:
-            models.User.objects.create(name=name, account=account, passwd=password1, image="")
-            return HttpResponseRedirect('/blog')
-    else:
-        return render(request, "blog/register.html", {"msg":"账户为空"})
 
 def uploadImg(request):
     userinfo = ""
