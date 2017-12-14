@@ -86,18 +86,25 @@ def comment_blog(request, blog_id):
     models.Comments.objects.create(username=user_name, blog_id=blog_id, comment_id=comment_id, content=content, create_time=datetime.now())
     return HttpResponseRedirect("/blog/page/%s" % blog_id)
 
+@csrf_exempt
 def signin(request):
     if request.method == 'POST':
         account = request.POST.get("account", "")
         password = request.POST.get("password", "")
-        if account and password:
-            password = get_md5(password)
         user = models.User.objects.filter(account=account, passwd=password)
+        ret_json = {"statu": True, "msg": "登陆成功"}
         if user:
-            response = HttpResponseRedirect("/blog")
+            ret_json["statu"] = True
+            ret_json["msg"] = "登陆成功"
+            ret = json.dumps(ret_json)
+            response = HttpResponse(ret)
             response.set_cookie(key='account', value=account, expires=3600)
             return response
-        return render(request, "blog/signin.html", {"msg": "登录失败"})
+        else:
+            ret_json["statu"] = False
+            ret_json["msg"] = "用户名或密码错误"
+            ret = json.dumps(ret_json)
+            return HttpResponse(ret)
     return render(request, "blog/signin.html")
 
 @csrf_exempt

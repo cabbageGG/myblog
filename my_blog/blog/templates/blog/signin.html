@@ -14,59 +14,78 @@
     <script src="/static/js/uikit.min.js"></script>
     <script src="/static/js/vue.min.js"></script>
     <script src="/static/js/awesome.js"></script>
-{#    <script>#}
-{##}
-{#$(function() {#}
-{#    var vm = new Vue({#}
-{#        el: '#form-signin',#}
-{#        data: {#}
-{#            email: '',#}
-{#            password: '',#}
-{#            remember: false#}
-{#        },#}
-{#        methods: {#}
-{#            submit: function (event) {#}
-{#                event.preventDefault();#}
-{#                var email = this.email.trim().toLowerCase();#}
-{#                showError();#}
-{#                startLoading();#}
-{#                postApi('/api/authenticate', {#}
-{#                    email: email,#}
-{#                    password: CryptoJS.MD5(this.password).toString(),#}
-{#                    remember: this.remember#}
-{#                }, function (err, result) {#}
-{#                    if (err) {#}
-{#                        showError(err);#}
-{#                    }#}
-{#                    else {#}
-{#                        return location.assign(result.admin ? '/manage/' : '/');#}
-{#                    }#}
-{#                    stopLoading();#}
-{#                });#}
-{#            }#}
-{#        }#}
-{#    });#}
-{#})#}
-{##}
-{#    </script>#}
+    <script>
+
+function validateEmail(email) {
+    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+    return re.test(email.toLowerCase());
+ }
+
+function showMsg(msg){
+    //原始DOM操作方式
+{#    var error_msg = document.getElementById("error-msg");#}
+{#    error_msg.innerHTML = msg;#}
+    //jQuery操作DOM方式
+    $('#signin-msg').html(msg);
+}
+
+$(function () {
+    $('#form-signin').submit(function () {
+        var account = $('#signin-account').val();
+        var password = $('#signin-password').val();
+        if (! validateEmail(account.trim().toLowerCase())) {
+            showMsg('请输入正确的Email地址');
+            return;
+        }
+        if (password.length < 6) {
+            showMsg('口令长度至少为6个字符');
+            return;
+        }
+        $.post('{% url 'blog:signin' %}',{
+            account:account,
+            password:CryptoJS.MD5(password).toString(),
+        }).done(function (data) {
+            try {
+        　　      // 此处是可能产生例外的语句
+                 var obj = JSON.parse(data);
+        　　} catch(error) {
+        　　     // 此处是负责例外处理的语句
+                 alert('服务端返回json解析出错：'+str(error))
+                 return location.assign('/blog');  //这里重定向到首页
+        　　 }
+            if (obj.statu){
+                 return location.assign('/blog');  //这里重定向到首页
+            }
+            else{
+                 showMsg("登陆失败: "+obj.msg);
+            }
+            }).fail(function (xhr, status) {
+                alert('请求失败: ' + xhr.status + ', 原因: ' + status);
+            }).always(function () {
+{#                alert('请求完成: 无论成功或失败都会调用');#}
+        });
+    })
+})
+
+    </script>
 </head>
 <body class="uk-height-1-1">
     <div class="uk-vertical-align uk-text-center uk-height-1-1">
         <div class="uk-vertical-align-middle" style="width: 320px">
             <p><a href="/" class="uk-icon-button"><i class="uk-icon-html5"></i></a> <a href="/">Awesome Python Webapp</a></p>
-            <form id="form-signin" action="{% url 'blog:signin' %}" class="uk-panel uk-panel-box uk-form" method="post">
+            <form id="form-signin" action="javascript:void(0)" class="uk-panel uk-panel-box uk-form" method="post">
                 {% csrf_token %}
                 <div class="uk-alert uk-alert-danger uk-hidden"></div>
                 <div class="uk-form-row">
                     <div class="uk-form-icon uk-width-1-1">
                         <i class="uk-icon-envelope-o"></i>
-                        <input name="account" type="text" placeholder="邮箱" maxlength="50" class="uk-width-1-1 uk-form-large">
+                        <input id="signin-account" name="account" type="text" placeholder="邮箱" maxlength="50" class="uk-width-1-1 uk-form-large">
                     </div>
                 </div>
                 <div class="uk-form-row">
                     <div class="uk-form-icon uk-width-1-1">
                         <i class="uk-icon-lock"></i>
-                        <input name="password" type="password" placeholder="口令" maxlength="50" class="uk-width-1-1 uk-form-large">
+                        <input id="signin-password" name="password" type="password" placeholder="口令" maxlength="50" class="uk-width-1-1 uk-form-large">
                     </div>
                 </div>
                 <div class="uk-form-row">
@@ -75,9 +94,7 @@
 {#                <div class="uk-form-row uk-text-small">#}
 {#                    <label class="uk-float-left"><input v-model="remember" type="checkbox"> 记住我</label>#}
 {#                </div>#}
-                {% if msg %}
-                    <p>{{ msg }}</p>
-                {% endif %}
+                <p id="signin-msg"></p>
             </form>
         </div>
     </div>
