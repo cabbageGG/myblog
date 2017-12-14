@@ -49,15 +49,28 @@ function show_comments(comments_array) {
               if (username == "cabbageGG"){
                   username = username+"(作者)";
               }
-              if (obj.userimage == "null") {
-                  var userimage = "/media/img/default.jpg";
-              }else {
-                  var userimage = "/media/"+obj.userimage;
+              var userimage = "/media/img/default.jpg";
+              if (obj.userimage) {
+                  userimage = "/media/"+obj.userimage;
               }
               var create_time = obj.create_time;
               var content = obj.content;
-              $('#yj-comment-list').append('<li><article class="uk-comment"><div class="uk-comment-header"><div class="uk-comment-head"><img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="${userimage}"><h4 class="uk-comment-title">${username}</h4><p class="uk-comment-meta">${create_time}</p></div><br><div class="uk-comment-body"><p>{content}</p></div></div></article></li>');
-
+              var html_str = '<li>'+
+                               '<article class="uk-comment">'+
+                                    '<div class="uk-comment-header">'+
+                                        '<div class="uk-comment-head">'+
+                                            '<img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="'+userimage+'">'+
+                                            '<h4 class="uk-comment-title">'+username+'</h4>'+
+                                            '<p class="uk-comment-meta">'+create_time+'</p>'+
+                                        '</div>'+
+                                        '<br>'+
+                                        '<div class="uk-comment-body">'+
+                                            '<p>'+content+'</p>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</article>'+
+                            '</li>'
+              $('#yj-comment-list').append(html_str);
           }
     }else{
         $('#yj-comment-list').html('<p>还没有人评论...</p>');
@@ -112,30 +125,32 @@ function show_comments(comments_array) {
 
         <h3>最新评论</h3>
 
+        {% autoescape off %}
         <ul id="yj-comment-list" class="uk-comment-list">
 {#            {% if comments %}#}
 {#            {% for comment in comments %}#}
-{#            <li>#}
-{#                <article class="uk-comment">#}
-{#                    <div class="uk-comment-header">#}
-{#                        <div class="uk-comment-head">#}
-{#                            <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{% if comment.userimage %}{{ comment.userimage.url }} {% else %} /media/img/default.jpg {% endif %}">#}
-{#                            <h4 class="uk-comment-title">{{ comment.username }} {% if comment.username == "cabbageGG" %}(作者){% endif %}</h4>#}
-{#                            <p class="uk-comment-meta">{{ comment.create_time }}</p>#}
-{#                        </div>#}
-{#                        <br>#}
-{#                        <div class="uk-comment-body">#}
-                             {#需要解决空格问题！！！自定义一个函数处理#}
-{#                            <p>{{ comment.content | linebreaksbr }}</p>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </article>#}
-{#            </li>#}
+            <li>
+                <article class="uk-comment">
+                    <div class="uk-comment-header">
+                        <div class="uk-comment-head">
+                            <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{% if comment.userimage %}{{ comment.userimage.url }} {% else %} /media/img/default.jpg {% endif %}">
+                            <h4 class="uk-comment-title">{{ comment.username }} {% if comment.username == "cabbageGG" %}(作者){% endif %}</h4>
+                            <p class="uk-comment-meta">{{ comment.create_time }}</p>
+                        </div>
+                        <br>
+                        <div class="uk-comment-body">
+                             需要解决空格问题！！！自定义一个函数处理
+                            <p>{{ comment.content | linebreaksbr }}</p>
+                        </div>
+                    </div>
+                </article>
+            </li>
 {#            {% endfor %}#}
 {#            {% else %}#}
 {#            <p>还没有人评论...</p>#}
 {#            {% endif %}#}
         </ul>
+        {% endautoescape %}
 
     </div>
 

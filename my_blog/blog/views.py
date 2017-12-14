@@ -5,6 +5,7 @@ from datetime import datetime
 from django.http import HttpResponseRedirect,HttpResponse
 import json
 from django.forms.models import model_to_dict
+from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt  #当使用ajax发送post请求时，需要加上@csrf_exempt装饰器
 # Create your views here.
 
@@ -74,6 +75,7 @@ def show_blog(request, blog_id):
     comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
     return render(request, "blog/blog.html", {"blog": blog, "comments":comments, "userinfo":userinfo})
 
+@csrf_exempt
 def comment_blog(request, blog_id):
     user_name = request.POST.get("user_name", "游客")
     account = request.COOKIES.get("account","")
@@ -163,16 +165,24 @@ def uploadImg(request):
 
 
 def ajax(request):
+    # if request.method == 'POST':
+    #
+    #     return
     blog_id = request.GET.get("blog_id", "1")
     comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
-    print type(comments)
+    json_ser = serializers.get_serializer("json")()
+    ret = json_ser.serialize(comments, ensure_ascii=False)
+    ret_json = json.loads(ret)
     comment_list = []
-    for comment in comments:
-        print type(comment)
-        comment = model_to_dict(comment)
-        print type(comment)
-        print comment
-        comment_list.append(comment)
+    for json_data in ret_json:
+        comment_dict = json_data["fields"]
+        content = comment_dict["content"]
+        content = content.replace(" ", "&nbsp;")   #预处理空格
+        content = content.replace("\r\n", "<br/>") #预处理换行
+        comment_dict["content"] = content
+        comment_dict["id"] = json_data["pk"]
+        comment_list.append(comment_dict)
+    print (comment_list)
     ret_json = {"comments":comment_list}
     ret = json.dumps(ret_json)
     response = HttpResponse(ret)
