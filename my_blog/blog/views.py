@@ -2,7 +2,8 @@
 from django.shortcuts import render
 from blog import models
 from datetime import datetime
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
+import json
 from django.views.decorators.csrf import csrf_exempt  #当使用ajax发送post请求时，需要加上@csrf_exempt装饰器
 # Create your views here.
 
@@ -99,31 +100,33 @@ def signin(request):
         return render(request, "blog/signin.html", {"msg": "登录失败"})
     return render(request, "blog/signin.html")
 
+@csrf_exempt
 def register(request):
     if request.method == 'POST':
         name = request.POST.get("name", "")
         account = request.POST.get("account", "")
-        password1 = request.POST.get("password1", "")
-        password2 = request.POST.get("password2", "")
-        if password1 == "" or password2 == "":
-            return render(request, "blog/register.html", {"msg": "密码不能为空"})
-        if password1 != password2:
-            return render(request, "blog/register.html", {"msg": "两次密码不相同"})
+        password = request.POST.get("password", "")
+        ret_json = {"statu": True, "msg": "注册成功"}
         if account:
             user1 = models.User.objects.filter(account=account)
             user2 = models.User.objects.filter(name=name)
             if user1:
-                return render(request, "blog/register.html", {"msg": "账户已存在"})
+                ret_json["statu"] = False
+                ret_json["msg"] = "账户已存在"
             elif user2:
-                return render(request, "blog/register.html", {"msg": "用户名已存在"})
+                ret_json["statu"] = False
+                ret_json["msg"] = "用户名已存在"
             else:
-                password = get_md5(password1)
-                models.User.objects.create(name=name, account=account, passwd=password, image="")
-                response = HttpResponseRedirect("/blog")
-                response.set_cookie(key='account', value=account, expires=3600)
-                return response
+                models.User.objects.create(name=name, account=account, passwd=password)
+                ret_json["statu"] = True
+                ret_json["msg"] = "注册成功"
         else:
-            return render(request, "blog/register.html", {"msg": "账户为空"})
+            ret_json["statu"] = False
+            ret_json["msg"] = "账户为空"
+        ret = json.dumps(ret_json)
+        response = HttpResponse(ret)
+        response.set_cookie(key='account', value=account, expires=3600)
+        return response
     return render(request, "blog/register.html")
 
 def signout(request):
@@ -150,3 +153,14 @@ def uploadImg(request):
         return render(request, "blog/uploadImg.html", {"userinfo": userinfo, "msg": "error, username not found!"})
     return render(request, "blog/uploadImg.html",{"userinfo":userinfo})
 
+@csrf_exempt
+def ajax(reuqest):
+    ret_json = {"statu":True,"msg":"sucess"}
+    try:
+        print "hello"
+    except Exception,e:
+        ret_json["statu"] = False
+        ret_json["msg"] = str(e)
+    ret = json.dumps(ret_json)
+    response = HttpResponse(ret)
+    return response

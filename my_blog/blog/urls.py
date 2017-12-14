@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^signout/$', views.signout, name="signout"),
     url(r'^page/(?P<blog_id>\d+)/comment/$', views.comment_blog, name="comment"),
     url(r'^uploadImg/$', views.uploadImg, name="uploadImg"),
+    url(r'^ajax/$', views.ajax, name="ajax"),
 ]

@@ -6,54 +6,62 @@
 
 <script>
 
-{#function validateEmail(email) {#}
-{#    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;#}
-{#    return re.test(email.toLowerCase());#}
-{# }#}
+function validateEmail(email) {
+    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+    return re.test(email.toLowerCase());
+ }
 
-{#function ajaxLog(s) {#}
-{#    alert(s)#}
-{# }#}
-{##}
-{#$(function () {#}
-{#    $('#form-register').submit(function () {#}
-{#        alert('表单数据预处理');#}
-{#        var name = $('#name').val();#}
-{#        var account = $('#account').val();#}
-{#        var password1 = $('#password1').val();#}
-{#        var password2 = $('#password2').val();#}
-{#        if (! name.trim()){#}
-{#            alert('请输入名字');#}
-{#            return;#}
-{#        }#}
-{#        if (! validateEmail(account.trim().toLowerCase())) {#}
-{#            alert('请输入正确的Email地址');#}
-{#            return;#}
-{#        }#}
-{#        if (password1.length < 6) {#}
-{#            alert('口令长度至少为6个字符');#}
-{#            return;#}
-{#        }#}
-{#        if (password1 !== password2) {#}
-{#            alert('两次输入的口令不一致');#}
-{#            return;#}
-{#        }#}
-{#        $.get('{% url 'blog:register' %}',{#}
-{#            name:name,#}
-{#            account:account,#}
-{#            password1:CryptoJS.MD5(password1).toString(),#}
-{#            password2:CryptoJS.MD5(password2).toString(),#}
-{#        }).done(function (data) {#}
-{#            ajaxLog('成功, 收到的数据: ' + JSON.stringify(data));#}
-{#            return location.assign('/');#}
-{#            }).fail(function (xhr, status) {#}
-{#                ajaxLog('失败: ' + xhr.status + ', 原因: ' + status);#}
-{#            }).always(function () {#}
-{#                ajaxLog('请求完成: 无论成功或失败都会调用');#}
-{#        });#}
-{#        alert('end');#}
-{#    })#}
-{#{)#}
+$(function () {
+    $('#form-register').submit(function () {
+        alert('表单数据预处理');
+        var name = $('#name').val();
+        var account = $('#account').val();
+        var password1 = $('#password1').val();
+        var password2 = $('#password2').val();
+        if (! name.trim()){
+            alert('请输入名字');
+            return;
+        }
+        if (! validateEmail(account.trim().toLowerCase())) {
+            alert('请输入正确的Email地址');
+            return;
+        }
+        if (password1.length < 6) {
+            alert('口令长度至少为6个字符');
+            return;
+        }
+        if (password1 !== password2) {
+            alert('两次输入的口令不一致');
+            return;
+        }
+        $.post('{% url 'blog:register' %}',{
+            name:name,
+            account:account,
+            password:CryptoJS.MD5(password1).toString(),
+        }).done(function (data) {
+            try {
+        　　      // 此处是可能产生例外的语句
+                 var obj = JSON.parse(data);
+        　　} catch(error) {
+        　　     // 此处是负责例外处理的语句
+                 alert('服务端返回json解析出错：'+str(error))
+                 return location.assign('/blog');  //这里重定向到首页
+        　　 }
+            if (obj.statu){
+{#                 alert('成功, 收到的数据: ' + JSON.stringify(data));#}
+                 return location.assign('/blog');  //这里重定向到首页
+            }
+            else{
+                 alert("注册失败: "+obj.msg)
+                 return location.assign('/blog/register') //这里重定向到注册页面
+            }
+            }).fail(function (xhr, status) {
+                alert('请求失败: ' + xhr.status + ', 原因: ' + status);
+            }).always(function () {
+{#                alert('请求完成: 无论成功或失败都会调用');#}
+        });
+    })
+})
 
 
 </script>
@@ -64,7 +72,7 @@
 
     <div class="uk-width-2-3">
         <h1>欢迎注册！</h1>
-        <form id="form-register" class="uk-form uk-form-stacked" action="{% url 'blog:register' %}" method="post">
+        <form id="form-register" class="uk-form uk-form-stacked" action="javascript:(void)" method="post">
             {% csrf_token %}
             <div class="uk-alert uk-alert-danger uk-hidden"></div>
             <div class="uk-form-row">
