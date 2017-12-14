@@ -12,8 +12,11 @@ function validateEmail(email) {
  }
 
 function showMsg(msg){
-    var error_msg = document.getElementById("error-msg");
-    error_msg.innerHTML = msg;
+    //原始DOM操作方式
+{#    var error_msg = document.getElementById("error-msg");#}
+{#    error_msg.innerHTML = msg;#}
+    //jQuery操作DOM方式
+    $('#error-msg').html(msg);
 }
 
 $(function () {
