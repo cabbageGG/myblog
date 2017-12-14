@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^signin/$', views.signin, name="signin"),
     url(r'^register/$', views.register, name="register"),
     url(r'^signout/$', views.signout, name="signout"),
-    url(r'^page/(?P<blog_id>\d+)/comment/$', views.comment_blog, name="comment"),
+    url(r'^comment/$', views.comment, name="comment"),
     url(r'^uploadImg/$', views.uploadImg, name="uploadImg"),
     url(r'^ajax/$', views.ajax, name="ajax"),
 ]

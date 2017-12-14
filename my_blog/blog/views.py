@@ -18,6 +18,11 @@ def get_md5(value):
     m.update(value)
     return m.hexdigest()
 
+def replaceTags(content):
+    content = content.replace(" ", "&nbsp;")  # 预处理空格
+    content = content.replace("\n", "<br/>")  # 预处理换行
+    return content
+
 def index(request):
     userinfo = ""
     account = request.COOKIES.get("account","")
@@ -74,20 +79,6 @@ def show_blog(request, blog_id):
     blog = models.Blog.objects.get(id=blog_id)
     comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
     return render(request, "blog/blog.html", {"blog": blog, "comments":comments, "userinfo":userinfo})
-
-@csrf_exempt
-def comment_blog(request, blog_id):
-    user_name = request.POST.get("user_name", "游客")
-    account = request.COOKIES.get("account","")
-    if account:
-        user = models.User.objects.filter(account=account)
-        if user:
-            user_name = user[0].name
-    blog_id = request.POST.get("blog_id", "1")
-    comment_id = request.POST.get("comment_id", "0")
-    content = request.POST.get("content", "")
-    models.Comments.objects.create(username=user_name, blog_id=blog_id, comment_id=comment_id, content=content, create_time=datetime.now())
-    return HttpResponseRedirect("/blog/page/%s" % blog_id)
 
 @csrf_exempt
 def signin(request):
@@ -163,23 +154,27 @@ def uploadImg(request):
         return render(request, "blog/uploadImg.html", {"userinfo": userinfo, "msg": "error, username not found!"})
     return render(request, "blog/uploadImg.html",{"userinfo":userinfo})
 
+@csrf_exempt
+def comment(request):
+    if request.method == 'POST':
+        user_name = request.POST.get("user_name", "游客")
+        user_image = request.POST.get("user_image", "/media/img/default.jpg")
+        blog_id = request.POST.get("blog_id", "1")
+        comment_id = request.POST.get("comment_id", "0")
+        content = request.POST.get("content", "")
+        content = replaceTags(content)
+        models.Comments.objects.create(username=user_name, userimage=user_image, blog_id=blog_id, comment_id=comment_id, content=content, create_time=datetime.now())
+        comments = models.Comments.objects.filter(username=user_name)
 
-def ajax(request):
-    # if request.method == 'POST':
-    #
-    #     return
-    blog_id = request.GET.get("blog_id", "1")
-    comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
+    else:
+        blog_id = request.GET.get("blog_id", "1")
+        comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
     json_ser = serializers.get_serializer("json")()
     ret = json_ser.serialize(comments, ensure_ascii=False)
     ret_json = json.loads(ret)
     comment_list = []
     for json_data in ret_json:
         comment_dict = json_data["fields"]
-        content = comment_dict["content"]
-        content = content.replace(" ", "&nbsp;")   #预处理空格
-        content = content.replace("\r\n", "<br/>") #预处理换行
-        comment_dict["content"] = content
         comment_dict["id"] = json_data["pk"]
         comment_list.append(comment_dict)
     print (comment_list)
@@ -187,3 +182,6 @@ def ajax(request):
     ret = json.dumps(ret_json)
     response = HttpResponse(ret)
     return response
+
+def ajax(request):
+    pass
