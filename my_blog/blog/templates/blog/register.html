@@ -11,27 +11,31 @@ function validateEmail(email) {
     return re.test(email.toLowerCase());
  }
 
+function showMsg(msg){
+    var error_msg = document.getElementById("error-msg");
+    error_msg.innerHTML = msg;
+}
+
 $(function () {
     $('#form-register').submit(function () {
-        alert('表单数据预处理');
         var name = $('#name').val();
         var account = $('#account').val();
         var password1 = $('#password1').val();
         var password2 = $('#password2').val();
         if (! name.trim()){
-            alert('请输入名字');
+            showMsg('请输入名字');
             return;
         }
         if (! validateEmail(account.trim().toLowerCase())) {
-            alert('请输入正确的Email地址');
+            showMsg('请输入正确的Email地址');
             return;
         }
         if (password1.length < 6) {
-            alert('口令长度至少为6个字符');
+            showMsg('口令长度至少为6个字符');
             return;
         }
         if (password1 !== password2) {
-            alert('两次输入的口令不一致');
+            showMsg('两次输入的口令不一致');
             return;
         }
         $.post('{% url 'blog:register' %}',{
@@ -53,7 +57,8 @@ $(function () {
             }
             else{
                  alert("注册失败: "+obj.msg)
-                 return location.assign('/blog/register') //这里重定向到注册页面
+                 showMsg(obj.msg)
+{#                 return location.assign('/blog/register') //这里重定向到注册页面#}
             }
             }).fail(function (xhr, status) {
                 alert('请求失败: ' + xhr.status + ', 原因: ' + status);
@@ -72,7 +77,7 @@ $(function () {
 
     <div class="uk-width-2-3">
         <h1>欢迎注册！</h1>
-        <form id="form-register" class="uk-form uk-form-stacked" action="javascript:(void)" method="post">
+        <form id="form-register" class="uk-form uk-form-stacked" action="javascript:void(0)" method="post">
             {% csrf_token %}
             <div class="uk-alert uk-alert-danger uk-hidden"></div>
             <div class="uk-form-row">
@@ -102,9 +107,8 @@ $(function () {
             <div class="uk-form-row">
                 <input type="submit" class="uk-button uk-button-primary" value="注册">
             </div>
-            {% if msg %}
-                <p>{{ msg }}</p>
-            {% endif %}
+            <p id="error-msg">
+            </p>
         </form>
     </div>
 
