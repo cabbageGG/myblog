@@ -81,13 +81,17 @@
             {% for comment in comments %}
             <li>
                 <article class="uk-comment">
-                    <header class="uk-comment-header">
-                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{% if comment.userimage %}{{ comment.userimage.url }} {% else %} /media/img/default.jpg {% endif %}">
-                        <h4 class="uk-comment-title">{{ comment.username }} {% if comment.username == "cabbageGG" %}(作者){% endif %}</h4>
-                        <p class="uk-comment-meta">{{ comment.create_time }}</p>
-                    </header>
-                    <div class="uk-comment-body">
-                        <p>{{ comment.content | linebreaksbr }}</p>
+                    <div class="uk-comment-header">
+                        <div class="uk-comment-head">
+                            <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{% if comment.userimage %}{{ comment.userimage.url }} {% else %} /media/img/default.jpg {% endif %}">
+                            <h4 class="uk-comment-title">{{ comment.username }} {% if comment.username == "cabbageGG" %}(作者){% endif %}</h4>
+                            <p class="uk-comment-meta">{{ comment.create_time }}</p>
+                        </div>
+                        <br>
+                        <div class="uk-comment-body">
+                             {#需要解决空格问题！！！自定义一个函数处理#}
+                            <p>{{ comment.content | linebreaksbr }}</p>
+                        </div>
                     </div>
                 </article>
             </li>
