@@ -76,7 +76,7 @@
 
         <h3>最新评论</h3>
 
-        <ul class="uk-comment-list">
+        <ul id="yj-comment-list" class="uk-comment-list">
             {% if comments %}
             {% for comment in comments %}
             <li>
@@ -104,6 +104,7 @@
             <div class="uk-text-center">
                 <img class="uk-border-circle" width="120" height="120" src="{% if userinfo.image %}{{ userinfo.image.url }} {% else %} /media/img/default.jpg {% endif %}">
             </div>
+        </form>
         </div>
         <div class="uk-panel uk-panel-header">
             <h3 class="uk-panel-title">友情链接</h3>
