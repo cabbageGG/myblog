@@ -4,6 +4,7 @@ from blog import models
 from datetime import datetime
 from django.http import HttpResponseRedirect,HttpResponse
 import json
+from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt  #当使用ajax发送post请求时，需要加上@csrf_exempt装饰器
 # Create your views here.
 
@@ -124,7 +125,7 @@ def register(request):
                 ret_json["statu"] = False
                 ret_json["msg"] = "用户名已存在"
             else:
-                models.User.objects.create(name=name, account=account, passwd=password)
+                models.User.objects.create(name=name, account=account, passwd=password, image="null")
                 ret_json["statu"] = True
                 ret_json["msg"] = "注册成功"
         else:
@@ -160,14 +161,19 @@ def uploadImg(request):
         return render(request, "blog/uploadImg.html", {"userinfo": userinfo, "msg": "error, username not found!"})
     return render(request, "blog/uploadImg.html",{"userinfo":userinfo})
 
-@csrf_exempt
-def ajax(reuqest):
-    ret_json = {"statu":True,"msg":"sucess"}
-    try:
-        print "hello"
-    except Exception,e:
-        ret_json["statu"] = False
-        ret_json["msg"] = str(e)
+
+def ajax(request):
+    blog_id = request.GET.get("blog_id", "1")
+    comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
+    print type(comments)
+    comment_list = []
+    for comment in comments:
+        print type(comment)
+        comment = model_to_dict(comment)
+        print type(comment)
+        print comment
+        comment_list.append(comment)
+    ret_json = {"comments":comment_list}
     ret = json.dumps(ret_json)
     response = HttpResponse(ret)
     return response
