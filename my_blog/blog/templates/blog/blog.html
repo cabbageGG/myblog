@@ -21,6 +21,10 @@ $(function (){
            var user_name = $('#yj-c-username').val();
            var user_image = $('#yj-c-userimage').val();
            var content = $('#yj-c-content').val();
+           if (!content.trim()){
+               $('#comment-msg').html('内容不能为空');
+               return;
+           }
            $.post('{% url 'blog:comment' %}',{
                   blog_id:blog_id,
                   comment_id:comment_id,
@@ -32,6 +36,7 @@ $(function (){
                 appendComment(obj.comments.pop());
                 $('#yj-c-content-div').empty();
                 $('#yj-c-content-div').append('<textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>')
+                $('#comment-msg').html('评论成功');
           });
      });
 });
@@ -115,6 +120,8 @@ function appendComment(obj) {
                     <div class="uk-form-row">
                         <input type="submit" class="uk-button uk-button-primary" value="发表评论">
                     </div>
+                    <p id="comment-msg">
+                    </p>
                 </form>
             </div>
         </article>
@@ -125,7 +132,6 @@ function appendComment(obj) {
     {% endif %}
 
         <h3>最新评论</h3>
-        {% autoescape off %}
         <ul id="yj-comment-list" class="uk-comment-list">
 {#            {% if comments %}#}
 {#            {% for comment in comments %}#}
@@ -150,7 +156,6 @@ function appendComment(obj) {
 {#            <p>还没有人评论...</p>#}
 {#            {% endif %}#}
         </ul>
-    {% endautoescape %}
     </div>
 
     <div class="uk-width-medium-1-4">
