@@ -184,8 +184,12 @@ def comment(request):
     return response
 
 
-def ajax(request):   #评论的回复
+def ajax(request):   #评论的回复//打开输入框
     comment_id = request.GET.get("comment_id", "0")
+    comment = models.Comments.objects.get(pk=comment_id) #获取评论父对象
+    comment_username = comment.username
+
+
     comment_username = request.GET.get("comment_username", "")
     blog_id = request.GET.get("blog_id", "1")
     user_name = request.POST.get("user_name", "游客")
