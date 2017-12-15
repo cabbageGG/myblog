@@ -183,5 +183,28 @@ def comment(request):
     response = HttpResponse(ret)
     return response
 
-def ajax(request):
-    pass
+
+def ajax(request):   #评论的回复
+    comment_id = request.GET.get("comment_id", "0")
+    comment_username = request.GET.get("comment_username", "")
+    blog_id = request.GET.get("blog_id", "1")
+    user_name = request.POST.get("user_name", "游客")
+    user_image = request.POST.get("user_image", "/media/img/default.jpg")
+    content = request.POST.get("content", "")
+    content = replaceTags(content)
+    models.Comments.objects.create(username=user_name, userimage=user_image, blog_id=blog_id, comment_id=comment_id, comment_username=comment_username,
+                                   content=content, create_time=datetime.now())
+    comments = models.Comments.objects.filter(username=user_name, comment_id=comment_id)
+    json_ser = serializers.get_serializer("json")()
+    ret = json_ser.serialize(comments, ensure_ascii=False)
+    ret_json = json.loads(ret)
+    comment_list = []
+    for json_data in ret_json:
+        comment_dict = json_data["fields"]
+        comment_dict["id"] = json_data["pk"]
+        comment_list.append(comment_dict)
+    # print (comment_list)
+    ret_json = {"comments":comment_list}
+    ret = json.dumps(ret_json)
+    response = HttpResponse(ret)
+    return response

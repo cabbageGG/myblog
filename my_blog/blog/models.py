@@ -24,6 +24,7 @@ class Comments(models.Model):
     userimage = models.ImageField(upload_to='img', null=True)
     blog_id = models.IntegerField() #表示他是博客blog_id的评论
     comment_id = models.IntegerField(default=0) #默认为0，表示他是一条评论; 当有comment_id值时，表示他是评论comment_id的留言
+    comment_username = models.CharField(max_length=32, null=True)  # 评论回复对象的用户名
     content = models.TextField()
     create_time = models.DateTimeField()
     def __unicode__(self):

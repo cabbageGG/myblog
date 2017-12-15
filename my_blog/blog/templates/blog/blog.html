@@ -67,8 +67,9 @@ function obj2html(obj) {
       }
       var create_time = obj.create_time;
       var content = obj.content;
+      var id = obj.id;
       var html_str = '<li>'+
-                       '<article class="uk-comment">'+
+                       '<article id="yj-comment-'+id+'" class="uk-comment">'+
                             '<div class="uk-comment-header">'+
                                 '<div class="uk-comment-head">'+
                                     '<img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="'+userimage+'">'+
@@ -78,12 +79,17 @@ function obj2html(obj) {
                                 '<br>'+
                                 '<div class="uk-comment-body">'+
                                     '<p>'+content+'</p>'+
+                                    ''+
                                 '</div>'+
                             '</div>'+
                         '</article>'+
                     '</li>';
       return html_str;
 }
+
+
+
+
 
 </script>
 
@@ -157,6 +163,7 @@ function obj2html(obj) {
 {#            {% else %}#}
 {#            <p>还没有人评论...</p>#}
 {#            {% endif %}#}
+            <button type="button" class="uk-button uk-button-primary">注册</button>
         </ul>
     </div>
 
