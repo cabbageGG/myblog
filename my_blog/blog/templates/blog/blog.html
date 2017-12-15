@@ -33,10 +33,11 @@ $(function (){
                   content:content
            }).done(function (data) {
                 var obj = JSON.parse(data);
-                appendComment(obj.comments.pop());
+                var html = obj2html(obj.comments.pop());
+                $('#yj-comment-list').prepend(html);
                 $('#yj-c-content-div').empty();
                 $('#yj-c-content-div').append('<textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>')
-                $('#comment-msg').html('评论成功');
+                $('#comment-msg').html('');
           });
      });
 });
@@ -45,16 +46,17 @@ function show_comments(comments_array) {
 
     $('#yj-comment-list').html('');
     if (comments_array.length > 0 ){
-          for(i=0;i<comments_array.length;i++){
+          for(i=comments_array.length-1;i>=0;i--){
               var obj = comments_array[i];
-              appendComment(obj);
+              var html = obj2html(obj);
+              $('#yj-comment-list').append(html);
           }
     }else{
         $('#yj-comment-list').html('<p>还没有人评论...</p>');
     }
 }
 
-function appendComment(obj) {
+function obj2html(obj) {
       var username = obj.username;
       if (username == "cabbageGG"){
           username = username+"(作者)";
@@ -79,8 +81,8 @@ function appendComment(obj) {
                                 '</div>'+
                             '</div>'+
                         '</article>'+
-                    '</li>'
-      $('#yj-comment-list').append(html_str);
+                    '</li>';
+      return html_str;
 }
 
 </script>
