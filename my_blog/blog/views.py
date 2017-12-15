@@ -118,7 +118,7 @@ def register(request):
                 ret_json["statu"] = False
                 ret_json["msg"] = "用户名已存在"
             else:
-                models.User.objects.create(name=name, account=account, passwd=password, image="null")
+                models.User.objects.create(name=name, account=account, passwd=password)
                 ret_json["statu"] = True
                 ret_json["msg"] = "注册成功"
         else:

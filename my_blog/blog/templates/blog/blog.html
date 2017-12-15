@@ -15,6 +15,8 @@ $(function (){
           var comments_array = obj.comments;
           show_comments(comments_array);
      });
+
+
      $('#form-comment').submit(function () {
            var blog_id = $('#yj-c-blogid').val();
            var comment_id = $('#yj-c-commentid').val();
@@ -41,6 +43,8 @@ $(function (){
           });
      });
 });
+
+
 
 function show_comments(comments_array) {
 
@@ -69,7 +73,7 @@ function obj2html(obj) {
       var content = obj.content;
       var id = obj.id;
       var html_str = '<li>'+
-                       '<article id="yj-comment-'+id+'" class="uk-comment">'+
+                       '<article class="uk-comment">'+
                             '<div class="uk-comment-header">'+
                                 '<div class="uk-comment-head">'+
                                     '<img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="'+userimage+'">'+
@@ -77,9 +81,10 @@ function obj2html(obj) {
                                     '<p class="uk-comment-meta">'+create_time+'</p>'+
                                 '</div>'+
                                 '<br>'+
-                                '<div class="uk-comment-body">'+
+                                '<div id="yj-comment-body-'+id+'" class="uk-comment-body">'+
                                     '<p>'+content+'</p>'+
-                                    ''+
+                                    '<a href="#0" id="'+id+'" name="'+id+'" class="yj-comment-reply">回复</a>'+
+                                    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>'+
                                 '</div>'+
                             '</div>'+
                         '</article>'+
@@ -88,6 +93,12 @@ function obj2html(obj) {
 }
 
 
+var a = $('.test-click');
+ a.click(function () {
+    alert("test");
+{#    var b = a.attr('name');#}
+{#    alert(b);#}
+ });
 
 
 
@@ -103,6 +114,9 @@ function obj2html(obj) {
             <p class="uk-article-meta">last modify: {{ blog.create_time }}</p>
             <p>{% autoescape off %}{{ blog.content | replaceTags }}{% endautoescape %}</p>
         </article>
+        <a href="#0" class="test-click">点击1</a>
+        <a href="#0" class="test-click">点击2</a>
+        <a href="#0" class="test-click">点击3</a>
 
         <hr class="uk-article-divider">
 
@@ -163,7 +177,6 @@ function obj2html(obj) {
 {#            {% else %}#}
 {#            <p>还没有人评论...</p>#}
 {#            {% endif %}#}
-            <button type="button" class="uk-button uk-button-primary">注册</button>
         </ul>
     </div>
 
