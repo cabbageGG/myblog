@@ -88,7 +88,7 @@ function appendComment(obj) {
         <article class="uk-article">
             <h2>{{ blog.title }}</h2>
             <p class="uk-article-meta">last modify: {{ blog.create_time }}</p>
-            <p>{{ blog.content | linebreaksbr }}</p>
+            <p>{% autoescape off %}{{ blog.content | replaceTags }}{% endautoescape %}</p>
         </article>
 
         <hr class="uk-article-divider">

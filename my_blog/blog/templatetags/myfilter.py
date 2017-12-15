@@ -3,24 +3,13 @@
 # author: li yangjin
 
 from django.template import Library
-from django.template.defaultfilters import stringfilter
-from django.utils.html import conditional_escape
-from django.utils.safestring import mark_safe
-import re
 
 register = Library()
 
 @register.filter
-def testf(value):
-    return value
+def replaceTags(content):
+    content = content.replace(" ", "&nbsp;")  # 预处理空格
+    content = content.replace("\n", "<br/>")  # 预处理换行
+    return content
 
-@register.filter
-def spacify(value, autoescape=None):
-    if autoescape:
-        esc = conditional_escape
-    else:
-        esc = lambda x: x
-    return mark_safe(re.sub('\s', '&'+'nbsp;', esc(value)))
-spacify.needs_autoescape = True
-register.filter(spacify)
-register.filter('testf', testf)
+register.filter('replaceTags', replaceTags)
