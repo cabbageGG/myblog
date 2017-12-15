@@ -30,7 +30,8 @@ $(function (){
            }).done(function (data) {
                 var obj = JSON.parse(data);
                 appendComment(obj.comments.pop());
-                $('#yj-c-content').html("aaaaaa");
+                $('#yj-c-content-div').empty();
+                $('#yj-c-content-div').append('<textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>')
           });
      });
 });
@@ -87,7 +88,7 @@ function appendComment(obj) {
         <article class="uk-article">
             <h2>{{ blog.title }}</h2>
             <p class="uk-article-meta">last modify: {{ blog.create_time }}</p>
-            <p>{{ blog.content | linebreaks }}</p>
+            <p>{{ blog.content | linebreaksbr }}</p>
         </article>
 
         <hr class="uk-article-divider">
@@ -108,7 +109,7 @@ function appendComment(obj) {
                     <input id="yj-c-username" type="hidden" name="user_name" value="{{ userinfo.name | default:'游客' }}">
                     <input id="yj-c-userimage" type="hidden" name="user_img" value="{{ userinfo.image | default:"img/default.jpg" }}">
                     <div class="uk-alert uk-alert-danger uk-hidden"></div>
-                    <div class="uk-form-row">
+                    <div id="yj-c-content-div" class="uk-form-row">
                         <textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
                     </div>
                     <div class="uk-form-row">

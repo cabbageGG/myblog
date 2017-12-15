@@ -177,7 +177,7 @@ def comment(request):
         comment_dict = json_data["fields"]
         comment_dict["id"] = json_data["pk"]
         comment_list.append(comment_dict)
-    print (comment_list)
+    # print (comment_list)
     ret_json = {"comments":comment_list}
     ret = json.dumps(ret_json)
     response = HttpResponse(ret)
