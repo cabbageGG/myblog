@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^signout/$', views.signout, name="signout"),
     url(r'^comment/$', views.comment, name="comment"),
     url(r'^uploadImg/$', views.uploadImg, name="uploadImg"),
-    url(r'^ajax/$', views.ajax, name="ajax"),
+    url(r'^comment_reply/$', views.comment_reply, name="comment_reply"),
 ]

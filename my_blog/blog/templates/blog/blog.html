@@ -17,7 +17,6 @@ $(function (){
           comment_reply_event();
      });
 
-
      $('#form-comment').submit(function () {
            var blog_id = $('#yj-c-blogid').val();
            var comment_id = $('#yj-c-commentid').val();
@@ -53,8 +52,11 @@ function show_comments(comments_array) {
     if (comments_array.length > 0 ){
           for(i=comments_array.length-1;i>=0;i--){
               var obj = comments_array[i];
-              var html = obj2html(obj);
-              $('#yj-comment-list').append(html);
+              //这里判断是否是回复，是的话，不加载。
+              if (!obj.comment_id){
+                  var html = obj2html(obj);
+                  $('#yj-comment-list').append(html);
+              }
           }
     }else{
         $('#yj-comment-list').html('<p>还没有人评论...</p>');
@@ -62,6 +64,7 @@ function show_comments(comments_array) {
 }
 
 function obj2html(obj) {
+      var comment_id = obj.comment_id;
       var username = obj.username;
       if (username == "cabbageGG"){
           username = username+"(作者)";
@@ -73,9 +76,15 @@ function obj2html(obj) {
       var create_time = obj.create_time;
       var content = obj.content;
       var id = obj.id;
+      var cc_style = "uk-comment-header";
+      var cc_hr = "";
+      if (obj.comment_id){
+           cc_style = "uk-comment-head";
+           cc_hr = "<hr/>"
+      }
       var html_str = '<li>'+
                        '<article class="uk-comment">'+
-                            '<div class="uk-comment-header">'+
+                            '<div class="'+cc_style+'">'+cc_hr+
                                 '<div class="uk-comment-head">'+
                                     '<img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="'+userimage+'">'+
                                     '<h4 class="uk-comment-title">'+username+'</h4>'+
@@ -86,6 +95,8 @@ function obj2html(obj) {
                                     '<p>'+content+'</p>'+
                                     '<a href="#0" id="'+id+'" name="'+username+'" class="yj-comment-reply">回复</a>'+
                                     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>'+
+                                    '<ul id="yj-comment-reply-list-'+id+'" class="uk-comment-list">'+
+                                    '</ul>'+
                                 '</div>'+
                             '</div>'+
                         '</article>'+
@@ -93,10 +104,9 @@ function obj2html(obj) {
       return html_str;
 }
 
-function genReplyFormHtml(comment_id) {
+function genReplyFormHtml() {
 
     var html = '<form id="form-comment-reply" class="uk-form" action="javascript:void(0)" method="post">'+
-                    '<input id="yj-c-reply-commentid" type="hidden" name="blog_id" value="'+comment_id+'">'+
                      '<div id="yj-c-reply-content-div" class="uk-form-row">'+
                          '<textarea id="yj-c-reply-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>'+
                      '</div>'+
@@ -108,42 +118,45 @@ function genReplyFormHtml(comment_id) {
 }
 
 function comment_reply_event() {
-      var a = $('.yj-comment-reply');
-      var login = {{ userinfo }};
-      var blog_id = {{ blog.id }};
-      a.click(function () {
-            if (!login){
-                alert("请登陆后回复");
-                return;
-            }
-            var comment_id = a.attr('id');
-            var comment_username = a.attr('name');
-            alert(comment_id);
-            alert(comment_username);
-            var html = genReplyFormHtml();
-            $('#yj-comment-list').append(html);
-            $('#form-comment-reply').submit(function () {
-                 var comment_id = $('#yj-c-reply-commentid').val();
-                 var content = $('#yj-c-reply-content').val();
-                 if (!content.trim()){
-                     $('#comment-msg').html('内容不能为空');
-                     return;
-                 }
-                 $.post('{% url 'blog:comment_reply' %}',{
-                      blog_id:blog_id,
-                      comment_id:comment_id,
-                      content:content
-                 }).done(function (data) {
-                     var obj = JSON.parse(data);
-                     alert('reply-sucess');
-{#                     var html = obj2html(obj.comments.pop());#}
-{#                     $('#yj-comment-list').prepend(html);#}
-{#                     $('#yj-c-content-div').empty();#}
-{#                     $('#yj-c-content-div').append('<textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>')#}
-{#                     $('#comment-msg').html('');#}
-                 });
-            });
-       });
+      $('.yj-comment-reply').each(function () {
+          var blog_id = "{{ blog.id }}";
+          var login = "{{ userinfo }}";
+          $(this).click(function () {
+                if (!login){
+                    alert("请登陆后回复");
+                    return;
+                }
+                var user_name = "{{ userinfo.name }}";
+                var user_image = "{{ userinfo.image }}";
+                var comment_id = $(this).attr('id');
+                alert(comment_id);
+                var comment_username =$(this).attr('name');
+                var html = genReplyFormHtml();
+                $('#yj-comment-body-'+comment_id).append(html);
+                $('#form-comment-reply').submit(function () {
+                     var content = $('#yj-c-reply-content').val();
+                     if (!content.trim()){
+                         $('#comment-msg').html('内容不能为空');
+                         return;
+                     }
+                     $.post('{% url 'blog:comment' %}',{
+                          blog_id:blog_id,
+                          comment_id:comment_id,
+                          comment_username:comment_username,
+                          user_name:user_name,
+                          user_image:user_image,
+                          content:content
+                     }).done(function (data) {
+                         alert("data: "+data);
+                         var obj = JSON.parse(data);
+                         alert('reply-sucess');
+                         var html = obj2html(obj.comments.pop());
+                         $('#yj-comment-reply-list-'+comment_id).prepend(html);
+                         $('#form-comment-reply').empty();
+                     });
+                });
+           });
+      });
 }
 
 </script>
@@ -158,6 +171,9 @@ function comment_reply_event() {
             <p class="uk-article-meta">last modify: {{ blog.create_time }}</p>
             <p>{% autoescape off %}{{ blog.content | replaceTags }}{% endautoescape %}</p>
         </article>
+        <a href="#0" class="test-click" name="1">点击1</a>
+        <a href="#0" class="test-click" name="2">点击2</a>
+        <a href="#0" class="test-click" name="3">点击3</a>
         <hr class="uk-article-divider">
 
     {% if userinfo %}

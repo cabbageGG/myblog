@@ -161,11 +161,12 @@ def comment(request):
         user_image = request.POST.get("user_image", "/media/img/default.jpg")
         blog_id = request.POST.get("blog_id", "1")
         comment_id = request.POST.get("comment_id", "0")
+        print ("comment_id: "+comment_id)
+        comment_username = request.POST.get("comment_username","")
         content = request.POST.get("content", "")
         content = replaceTags(content)
-        models.Comments.objects.create(username=user_name, userimage=user_image, blog_id=blog_id, comment_id=comment_id, content=content, create_time=datetime.now())
+        models.Comments.objects.create(username=user_name, userimage=user_image, blog_id=blog_id, comment_id=comment_id,comment_username=comment_username, content=content, create_time=datetime.now())
         comments = models.Comments.objects.filter(username=user_name)
-
     else:
         blog_id = request.GET.get("blog_id", "1")
         comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
@@ -183,9 +184,9 @@ def comment(request):
     response = HttpResponse(ret)
     return response
 
-
-def ajax(request):   #评论的回复//打开输入框
-    comment_id = request.GET.get("comment_id", "0")
+@csrf_exempt
+def comment_reply(request):   #评论的回复//打开输入框
+    comment_id = request.POST.get("comment_id", "0")
     comment = models.Comments.objects.get(pk=comment_id) #获取评论父对象
     comment_username = comment.username
 
