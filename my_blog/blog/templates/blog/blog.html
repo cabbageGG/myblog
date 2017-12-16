@@ -6,6 +6,7 @@
 
 <script>
 
+//页面初始化函数入口
 $(function (){
      var blog_id = '{{ blog.id }}';
      $.get('/blog/comment',{
@@ -14,7 +15,7 @@ $(function (){
           var obj = JSON.parse(data);
           var comments_array = obj.comments;
           show_comments(comments_array);
-          comment_reply_event();
+{#          comment_reply_event();#}
      });
 
      $('#form-comment').submit(function () {
@@ -35,8 +36,11 @@ $(function (){
                   content:content
            }).done(function (data) {
                 var obj = JSON.parse(data);
-                var html = obj2html(obj.comments.pop());
+                var comment_obj = obj.comments.pop();
+                var html = obj2html(comment_obj);
                 $('#yj-comment-list').prepend(html);
+                alert(comment_obj.id);
+                add_event_to_comment_reply(comment_obj.id); //对这个新产生的comment的回复a标签绑定事件
                 $('#yj-c-content-div').empty();
                 $('#yj-c-content-div').append('<textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>')
                 $('#comment-msg').html('');
@@ -56,6 +60,7 @@ function show_comments(comments_array) {
               if (!obj.comment_id){
                   var html = obj2html(obj);
                   $('#yj-comment-list').append(html);
+                  add_event_to_comment_reply(obj.id);//初始化对这个comment的回复a标签绑定事件
               }
           }
     }else{
@@ -78,7 +83,7 @@ function obj2html(obj) {
       var id = obj.id;
       var cc_style = "uk-comment-header";
       var cc_hr = "";
-      if (obj.comment_id){
+      if (comment_id){
            cc_style = "uk-comment-head";
            cc_hr = "<hr/>"
       }
@@ -93,7 +98,7 @@ function obj2html(obj) {
                                 '<br>'+
                                 '<div id="yj-comment-body-'+id+'" class="uk-comment-body">'+
                                     '<p>'+content+'</p>'+
-                                    '<a href="#0" id="'+id+'" name="'+username+'" class="yj-comment-reply">回复</a>'+
+                                    '<a href="#0" id="yj-comment-reply-a'+id+'" name="'+username+'" class="yj-comment-reply">回复</a>'+
                                     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>'+
                                     '<ul id="yj-comment-reply-list-'+id+'" class="uk-comment-list">'+
                                     '</ul>'+
@@ -117,47 +122,89 @@ function genReplyFormHtml() {
     return html;
 }
 
-function comment_reply_event() {
-      $('.yj-comment-reply').each(function () {
-          var blog_id = "{{ blog.id }}";
-          var login = "{{ userinfo }}";
-          $(this).click(function () {
-                if (!login){
-                    alert("请登陆后回复");
-                    return;
-                }
-                var user_name = "{{ userinfo.name }}";
-                var user_image = "{{ userinfo.image }}";
-                var comment_id = $(this).attr('id');
-                alert(comment_id);
-                var comment_username =$(this).attr('name');
-                var html = genReplyFormHtml();
-                $('#yj-comment-body-'+comment_id).append(html);
-                $('#form-comment-reply').submit(function () {
-                     var content = $('#yj-c-reply-content').val();
-                     if (!content.trim()){
-                         $('#comment-msg').html('内容不能为空');
-                         return;
-                     }
-                     $.post('{% url 'blog:comment' %}',{
-                          blog_id:blog_id,
-                          comment_id:comment_id,
-                          comment_username:comment_username,
-                          user_name:user_name,
-                          user_image:user_image,
-                          content:content
-                     }).done(function (data) {
-                         alert("data: "+data);
-                         var obj = JSON.parse(data);
-                         alert('reply-sucess');
-                         var html = obj2html(obj.comments.pop());
-                         $('#yj-comment-reply-list-'+comment_id).prepend(html);
-                         $('#form-comment-reply').empty();
-                     });
-                });
-           });
-      });
+function add_event_to_comment_reply(id) {
+    var blog_id = "{{ blog.id }}";
+    var login = "{{ userinfo }}";
+    $('#yj-comment-reply-a'+id).click(function () {
+        if (!login){
+            alert("请登陆后回复");
+            return;
+        }
+        var user_name = "{{ userinfo.name }}";
+        var user_image = "{{ userinfo.image }}";
+        var comment_id = id;
+        alert(comment_id);
+        var comment_username =$(this).attr('name');
+        var html = genReplyFormHtml();
+        $('#yj-comment-body-'+comment_id).append(html);
+        $('#form-comment-reply').submit(function () {
+             var content = $('#yj-c-reply-content').val();
+             if (!content.trim()){
+                 $('#comment-msg').html('内容不能为空');
+                 return;
+             }
+             $.post('{% url 'blog:comment' %}',{
+                  blog_id:blog_id,
+                  comment_id:comment_id,
+                  comment_username:comment_username,
+                  user_name:user_name,
+                  user_image:user_image,
+                  content:content
+             }).done(function (data) {
+                 alert("data: "+data);
+                 var obj = JSON.parse(data);
+                 alert('reply-sucess');
+                 var comment_obj = obj.comments.pop();
+                 var html = obj2html(comment_obj);
+                 $('#yj-comment-reply-list-'+comment_id).prepend(html);
+                 add_event_to_comment_reply(comment_obj.id);//对这个reply-comment的回复a标签绑定事件
+                 $('#form-comment-reply').remove();
+             });
+        });
+    });
 }
+
+{#function comment_reply_event() {#}
+{#      $('.yj-comment-reply').each(function () {#}
+{#          var blog_id = "{{ blog.id }}";#}
+{#          var login = "{{ userinfo }}";#}
+{#          $(this).click(function () {#}
+{#                if (!login){#}
+{#                    alert("请登陆后回复");#}
+{#                    return;#}
+{#                }#}
+{#                var user_name = "{{ userinfo.name }}";#}
+{#                var user_image = "{{ userinfo.image }}";#}
+{#                var comment_id = $(this).attr('id');#}
+{#                alert(comment_id);#}
+{#                var comment_username =$(this).attr('name');#}
+{#                var html = genReplyFormHtml();#}
+{#                $('#yj-comment-body-'+comment_id).append(html);#}
+{#                $('#form-comment-reply').submit(function () {#}
+{#                     var content = $('#yj-c-reply-content').val();#}
+{#                     if (!content.trim()){#}
+{#                         $('#comment-msg').html('内容不能为空');#}
+{#                         return;#}
+{#                     }#}
+{#                     $.post('{% url 'blog:comment' %}',{#}
+{#                          blog_id:blog_id,#}
+{#                          comment_id:comment_id,#}
+{#                          comment_username:comment_username,#}
+{#                          user_name:user_name,#}
+{#                          user_image:user_image,#}
+{#                          content:content#}
+{#                     }).done(function (data) {#}
+{#                         alert("data: "+data);#}
+{#                         var obj = JSON.parse(data);#}
+{#                         alert('reply-sucess');#}
+{#                         var html = obj2html(obj.comments.pop());#}
+{#                         $('#yj-comment-reply-list-'+comment_id).prepend(html);#}
+{#                         $('#form-comment-reply').remove();#}
+{#                     });#}
+{#                });#}
+{#           });#}
+{#      });#}
+{# } #}
 
 </script>
 
