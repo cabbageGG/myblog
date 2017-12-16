@@ -13,9 +13,12 @@ $(function (){
      $.get('/blog/comment',{
          blog_id:blog_id
      }).done(function (data) {
+          alert("data:"+data);
           var obj = JSON.parse(data);
           var comments_array = obj.comments;
+          var comment_replys_array = obj.comment_replys;
           show_comments(comments_array);
+          show_comment_replys(comment_replys_array);
 {#          comment_reply_event();#}
      });
     //新增评论显示
@@ -69,6 +72,21 @@ function show_comments(comments_array) {
     }
 }
 
+function show_comment_replys(comments_array) {
+
+    if (comments_array.length > 0 ){
+          for(i=comments_array.length-1;i>=0;i--){
+              var obj = comments_array[i];
+              //这里判断是否是回复，是的话才加载。
+              if (obj.comment_id && obj.parent_id){
+                  var html = obj2html(obj);
+                  $('#yj-comment-reply-list-'+obj.parent_id).prepend(html);
+                  add_event_to_comment_reply(obj.id);//初始化对这个comment的回复a标签绑定事件
+              }
+          }
+    }
+}
+
 //评论对象转化为html
 function obj2html(obj) {
       var comment_id = obj.comment_id;
@@ -87,12 +105,14 @@ function obj2html(obj) {
       var cc_style = "uk-comment-header";
       var cc_hr = "";
       var parentid = obj.parent_id;
-      var parent_html = '<ul id="yj-comment-reply-list-'+parentid+'" class="uk-comment-list"></ul>'
+      var parent_html = '<ul id="yj-comment-reply-list-'+parentid+'" class="uk-comment-list" style="margin-left:20px;"></ul>';
+      var show_replys = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>';
       //判断是否是回复，是的话就要改变。
       if (comment_id){
            cc_style = "uk-comment-head";
            cc_hr = "<hr/>"
            parent_html = '';
+           show_replys = '';
       }
 
       var html_str = '<li>'+
@@ -107,7 +127,7 @@ function obj2html(obj) {
                                 '<div id="yj-comment-body-'+id+'" class="uk-comment-body">'+
                                     '<p>'+content+'</p>'+
                                     '<a href="#0" id="yj-comment-reply-a'+id+'" name="'+username+'" parentid="'+parentid+'" class="yj-comment-reply">回复</a>'+
-                                    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>'+parent_html+
+                                    show_replys+parent_html+
                                 '</div>'+
                             '</div>'+
                         '</article>'+
@@ -166,7 +186,7 @@ function add_event_to_comment_reply(id) {
                  alert("data: "+data);
                  var obj = JSON.parse(data);
                  alert('reply-sucess');
-                 var comment_obj = obj.comments.pop();
+                 var comment_obj = obj.comment_replys.pop();
                  var html = obj2html(comment_obj);
                  $('#yj-comment-reply-list-'+parent_id).prepend(html);
                  add_event_to_comment_reply(comment_obj.id);//对这个reply-comment的回复a标签绑定事件

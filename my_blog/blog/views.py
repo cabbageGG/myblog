@@ -175,17 +175,21 @@ def comment(request):
         comments = models.Comments.objects.filter(username=user_name)
     else:
         blog_id = request.GET.get("blog_id", "1")
-        comments = models.Comments.objects.filter(blog_id=blog_id, comment_id=0)
+        comments = models.Comments.objects.filter(blog_id=blog_id)
     json_ser = serializers.get_serializer("json")()
     ret = json_ser.serialize(comments, ensure_ascii=False)
     ret_json = json.loads(ret)
     comment_list = []
+    comment_reply_list = []
     for json_data in ret_json:
         comment_dict = json_data["fields"]
         comment_dict["id"] = json_data["pk"]
-        comment_list.append(comment_dict)
-    # print (comment_list)
-    ret_json = {"comments":comment_list}
+        if comment_dict["comment_id"] is 0:
+            comment_list.append(comment_dict)
+        else:
+            comment_reply_list.append(comment_dict)
+    print (comment_list)
+    ret_json = {"comments":comment_list, "comment_replys":comment_reply_list}
     ret = json.dumps(ret_json)
     response = HttpResponse(ret)
     return response
