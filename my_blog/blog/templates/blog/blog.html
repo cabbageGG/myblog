@@ -13,7 +13,6 @@ $(function (){
      $.get('/blog/comment',{
          blog_id:blog_id
      }).done(function (data) {
-          alert("data:"+data);
           var obj = JSON.parse(data);
           var comments_array = obj.comments;
           var comment_replys_array = obj.comment_replys;
@@ -43,7 +42,6 @@ $(function (){
                 var comment_obj = obj.comments.pop();
                 var html = obj2html(comment_obj);
                 $('#yj-comment-list').prepend(html);
-                alert(comment_obj.id);
                 add_event_to_comment_reply(comment_obj.id); //对这个新产生的comment的回复a标签绑定事件
                 $('#yj-c-content-div').empty();
                 $('#yj-c-content-div').append('<textarea id="yj-c-content" name="content" rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>')
@@ -106,13 +104,19 @@ function obj2html(obj) {
       var cc_hr = "";
       var parentid = obj.parent_id;
       var parent_html = '<ul id="yj-comment-reply-list-'+parentid+'" class="uk-comment-list" style="margin-left:20px;"></ul>';
-      var show_replys = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>';
+{#      var show_replys = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>';#}
+      var show_replys = ''; //这个功能暂时不做啦。
+      var comment_username = obj.comment_username;
+      var show_title = '<h4 class="uk-comment-title">'+username+'</h4>';
+      var reply_style = "";
       //判断是否是回复，是的话就要改变。
       if (comment_id){
            cc_style = "uk-comment-head";
            cc_hr = "<hr/>"
            parent_html = '';
            show_replys = '';
+           show_title = '<h4 class="uk-comment-title">'+username+'回复'+comment_username+'</h4>';
+           reply_style = "display:block;margin-left:720px;";
       }
 
       var html_str = '<li>'+
@@ -120,13 +124,13 @@ function obj2html(obj) {
                             '<div class="'+cc_style+'">'+cc_hr+
                                 '<div class="uk-comment-head">'+
                                     '<img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="'+userimage+'">'+
-                                    '<h4 class="uk-comment-title">'+username+'</h4>'+
+                                     show_title+
                                     '<p class="uk-comment-meta">'+create_time+'</p>'+
                                 '</div>'+
                                 '<br>'+
                                 '<div id="yj-comment-body-'+id+'" class="uk-comment-body">'+
                                     '<p>'+content+'</p>'+
-                                    '<a href="#0" id="yj-comment-reply-a'+id+'" name="'+username+'" parentid="'+parentid+'" class="yj-comment-reply">回复</a>'+
+                                    '<a href="#0" id="yj-comment-reply-a'+id+'" name="'+username+'" parentid="'+parentid+'" class="yj-comment-reply" style="'+reply_style+'">回复</a>'+
                                     show_replys+parent_html+
                                 '</div>'+
                             '</div>'+
@@ -161,7 +165,6 @@ function add_event_to_comment_reply(id) {
         var user_name = "{{ userinfo.name }}";
         var user_image = "{{ userinfo.image }}";
         var comment_id = id;
-        alert(comment_id);
         var comment_username =$(this).attr('name');
         var parent_id = $(this).attr("parentid");
         var html = genReplyFormHtml();
@@ -183,9 +186,7 @@ function add_event_to_comment_reply(id) {
                   user_image:user_image,
                   content:content
              }).done(function (data) {
-                 alert("data: "+data);
                  var obj = JSON.parse(data);
-                 alert('reply-sucess');
                  var comment_obj = obj.comment_replys.pop();
                  var html = obj2html(comment_obj);
                  $('#yj-comment-reply-list-'+parent_id).prepend(html);
