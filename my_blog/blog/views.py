@@ -162,10 +162,16 @@ def comment(request):
         blog_id = request.POST.get("blog_id", "1")
         comment_id = request.POST.get("comment_id", "0")
         print ("comment_id: "+comment_id)
+        parent_id = request.POST.get("parent_id","0")
         comment_username = request.POST.get("comment_username","")
         content = request.POST.get("content", "")
         content = replaceTags(content)
-        models.Comments.objects.create(username=user_name, userimage=user_image, blog_id=blog_id, comment_id=comment_id,comment_username=comment_username, content=content, create_time=datetime.now())
+        models.Comments.objects.create(username=user_name, userimage=user_image, blog_id=blog_id, comment_id=comment_id,parent_id=parent_id,comment_username=comment_username, content=content, create_time=datetime.now())
+        comments = models.Comments.objects.filter(parent_id=0)
+        for comment in comments:
+            if comment.parent_id is 0:
+                comment.parent_id = comment.id
+                comment.save()
         comments = models.Comments.objects.filter(username=user_name)
     else:
         blog_id = request.GET.get("blog_id", "1")

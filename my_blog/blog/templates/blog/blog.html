@@ -9,6 +9,7 @@
 //页面初始化函数入口
 $(function (){
      var blog_id = '{{ blog.id }}';
+     //初始化评论列表
      $.get('/blog/comment',{
          blog_id:blog_id
      }).done(function (data) {
@@ -17,7 +18,7 @@ $(function (){
           show_comments(comments_array);
 {#          comment_reply_event();#}
      });
-
+    //新增评论显示
      $('#form-comment').submit(function () {
            var blog_id = $('#yj-c-blogid').val();
            var comment_id = $('#yj-c-commentid').val();
@@ -68,6 +69,7 @@ function show_comments(comments_array) {
     }
 }
 
+//评论对象转化为html
 function obj2html(obj) {
       var comment_id = obj.comment_id;
       var username = obj.username;
@@ -81,12 +83,18 @@ function obj2html(obj) {
       var create_time = obj.create_time;
       var content = obj.content;
       var id = obj.id;
+      //默认是评论
       var cc_style = "uk-comment-header";
       var cc_hr = "";
+      var parentid = obj.parent_id;
+      var parent_html = '<ul id="yj-comment-reply-list-'+parentid+'" class="uk-comment-list"></ul>'
+      //判断是否是回复，是的话就要改变。
       if (comment_id){
            cc_style = "uk-comment-head";
            cc_hr = "<hr/>"
+           parent_html = '';
       }
+
       var html_str = '<li>'+
                        '<article class="uk-comment">'+
                             '<div class="'+cc_style+'">'+cc_hr+
@@ -98,10 +106,8 @@ function obj2html(obj) {
                                 '<br>'+
                                 '<div id="yj-comment-body-'+id+'" class="uk-comment-body">'+
                                     '<p>'+content+'</p>'+
-                                    '<a href="#0" id="yj-comment-reply-a'+id+'" name="'+username+'" class="yj-comment-reply">回复</a>'+
-                                    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>'+
-                                    '<ul id="yj-comment-reply-list-'+id+'" class="uk-comment-list">'+
-                                    '</ul>'+
+                                    '<a href="#0" id="yj-comment-reply-a'+id+'" name="'+username+'" parentid="'+parentid+'" class="yj-comment-reply">回复</a>'+
+                                    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0" class="yj-comment-reply-show">展开</a>'+parent_html+
                                 '</div>'+
                             '</div>'+
                         '</article>'+
@@ -109,6 +115,7 @@ function obj2html(obj) {
       return html_str;
 }
 
+//产生评论的回复输入框html
 function genReplyFormHtml() {
 
     var html = '<form id="form-comment-reply" class="uk-form" action="javascript:void(0)" method="post">'+
@@ -122,6 +129,7 @@ function genReplyFormHtml() {
     return html;
 }
 
+//绑定回复的响应事件
 function add_event_to_comment_reply(id) {
     var blog_id = "{{ blog.id }}";
     var login = "{{ userinfo }}";
@@ -135,8 +143,11 @@ function add_event_to_comment_reply(id) {
         var comment_id = id;
         alert(comment_id);
         var comment_username =$(this).attr('name');
+        var parent_id = $(this).attr("parentid");
         var html = genReplyFormHtml();
         $('#yj-comment-body-'+comment_id).append(html);
+
+        //新增评论回复
         $('#form-comment-reply').submit(function () {
              var content = $('#yj-c-reply-content').val();
              if (!content.trim()){
@@ -145,6 +156,7 @@ function add_event_to_comment_reply(id) {
              }
              $.post('{% url 'blog:comment' %}',{
                   blog_id:blog_id,
+                  parent_id:parent_id,
                   comment_id:comment_id,
                   comment_username:comment_username,
                   user_name:user_name,
@@ -156,7 +168,7 @@ function add_event_to_comment_reply(id) {
                  alert('reply-sucess');
                  var comment_obj = obj.comments.pop();
                  var html = obj2html(comment_obj);
-                 $('#yj-comment-reply-list-'+comment_id).prepend(html);
+                 $('#yj-comment-reply-list-'+parent_id).prepend(html);
                  add_event_to_comment_reply(comment_obj.id);//对这个reply-comment的回复a标签绑定事件
                  $('#form-comment-reply').remove();
              });
