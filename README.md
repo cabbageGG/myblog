@@ -1,6 +1,6 @@
 # myblog
-my blog web site
 
+my blog web site based on django
 
 v1.0: 基本实现blog的显示和后台管理。
 
