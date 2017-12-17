@@ -254,6 +254,7 @@ function add_event_to_comment_reply(id) {
 {#        <a href="#0" class="test-click" name="1">点击1</a>#}
 {#        <a href="#0" class="test-click" name="2">点击2</a>#}
 {#        <a href="#0" class="test-click" name="3">点击3</a>#}
+        <p>{% autoescape off %}123<a>测试点击</a>{% endautoescape %}</p>
         <hr class="uk-article-divider">
 
     {% if userinfo %}
