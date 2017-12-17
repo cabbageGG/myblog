@@ -58,6 +58,8 @@ def blogs(request):
     end = first + 10
     blogs = models.Blog.objects.all()
     total_nums = len(blogs)
+    if total_nums <= end:
+        end = total_nums #最后一页的逻辑处理
     if (total_nums % 10) > 0:
         page_nums = int(total_nums/10) + 1
     else:
@@ -66,7 +68,6 @@ def blogs(request):
     page_nums = range(0, page_nums)
     blogs = blogs[first:end]
     page = page - 1
-
     return render(request, "blog/blogs.html", {"blogs": blogs, "page":page, "page_nums":page_nums, "userinfo":userinfo})
 
 def show_blog(request, blog_id):
