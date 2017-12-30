@@ -34,6 +34,7 @@ def index(request):
     first = (page - 1)*10
     end = first + 10
     blogs = models.Blog.objects.all()
+    blogs = blogs[::-1]
     total_nums = len(blogs)
     if (total_nums % 10) > 0:
         page_nums = int(total_nums/10) + 1
@@ -57,6 +58,7 @@ def blogs(request):
     first = (page - 1)*10
     end = first + 10
     blogs = models.Blog.objects.all()
+    blogs = blogs[::-1]
     total_nums = len(blogs)
     if total_nums <= end:
         end = total_nums #最后一页的逻辑处理
