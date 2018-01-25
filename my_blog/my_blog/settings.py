@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*', 'www.liyangjin.club', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'blog.apps.SuitConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
