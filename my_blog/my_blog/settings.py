@@ -31,14 +31,16 @@ ALLOWED_HOSTS = ['*', 'www.liyangjin.club', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'blog.apps.SuitConfig',
+    #'blog.apps.SuitConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'blog',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +52,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+    ),
+    # 'DEFAULT_FILTER_BACKENDS': (
+    #     'rest_framework.filters.DjangoFilterBackend',
+    # )
+}
+
 
 ROOT_URLCONF = 'my_blog.urls'
 

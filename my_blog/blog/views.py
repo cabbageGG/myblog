@@ -226,3 +226,27 @@ def comment_reply(request):   #评论的回复//打开输入框
     ret = json.dumps(ret_json)
     response = HttpResponse(ret)
     return response
+
+
+from rest_framework import viewsets
+
+from blog.models import Blog, Comments
+from blog.serializers import BlogSerializer, CommentSerializer
+
+from utils.response import NormalResponse
+
+class BlogView(viewsets.ModelViewSet):
+    lookup_url_kwarg = ('blog_id')
+    lookup_field = ('id')
+    serializer_class = BlogSerializer
+    queryset = Blog.objects.all()
+
+    def count(self, request, *args, **kwargs):
+        count = len(self.get_queryset())
+        return NormalResponse({"count":count})
+
+class CommentView(viewsets.ModelViewSet):
+    lookup_url_kwarg = ('comment_id')
+    lookup_field = ('id')
+    serializer_class = CommentSerializer
+    queryset = Comments.objects.all()
