@@ -10,6 +10,9 @@ class Blog(models.Model):
     create_time = models.DateTimeField(null=True)
     def __unicode__(self):
         return self.title
+    
+    class Meta:
+        db_table = 'blog'
 
 class User(models.Model):
     name = models.CharField(max_length=32)
@@ -18,6 +21,9 @@ class User(models.Model):
     passwd = models.CharField(max_length=32, null=True)
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        db_table = 'user'
 
 class Comments(models.Model):
     username = models.CharField(max_length=32, default="passinger")
@@ -30,6 +36,9 @@ class Comments(models.Model):
     create_time = models.DateTimeField()
     def __unicode__(self):
         return self.username
+    
+    class Meta:
+        db_table = 'comments'
 
 
 

@@ -1,5 +1,7 @@
 BEGIN;
-CREATE DATABASE IF NOT EXISTS `myblog`;
+
+DROP DATABASE IF EXISTS `myblog`;
+CREATE DATABASE `myblog` DEFAULT CHARACTER SET utf8 ;
 USE myblog;
 DROP TABLE IF EXISTS `blog`;
 CREATE TABLE `blog` (
@@ -13,7 +15,7 @@ CREATE TABLE `blog` (
     PRIMARY KEY (`id`)
 );
 
-
+DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `username` varchar(32) NOT NULL, 
@@ -24,6 +26,17 @@ CREATE TABLE `comments` (
     `parent_id` int(11) NOT NULL,
     `comment_id` int(11) NOT NULL, 
     `comment_username` varchar(32) NULL,
+    PRIMARY KEY (`id`)
+);
+
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(32) NOT NULL, 
+    `image` varchar(100) NULL, 
+    `account` varchar(100) NULL, 
+    `passwd` varchar(100) NULL, 
     PRIMARY KEY (`id`)
 );
 
