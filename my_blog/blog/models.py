@@ -5,9 +5,11 @@ from django.db import models
 
 class Blog(models.Model):
     title = models.CharField(max_length=32, default="Title")
-    content = models.TextField(null=True)
-    summary = models.TextField(null=True)
-    create_time = models.DateTimeField(null=True)
+    content = models.TextField()
+    summary = models.TextField()
+    create_time = models.DateTimeField()
+    update_time = models.DateTimeField()
+    view_times = models.IntegerField(default=0)
     def __unicode__(self):
         return self.title
     
