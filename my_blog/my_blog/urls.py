@@ -22,8 +22,8 @@ from my_blog import settings
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', view.index, name="index"),
-    url(r'^blog/', include('blog.urls', namespace="blog"))
-
+    url(r'^blog/', include('blog.urls', namespace="blog")),
+    url(r'^api/blog/',include('blog_api.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

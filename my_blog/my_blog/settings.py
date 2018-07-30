@@ -28,7 +28,7 @@ SECRET_KEY = '%wv^jflat=18kg#i1-$)h^x%!ftm5$o9=f46g0t_bo%^40#0s)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'www.liyangjin.club', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'blog',
+    'blog_api',
     'rest_framework',
 ]
 
