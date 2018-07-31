@@ -9,7 +9,7 @@ class BlogTest(APITestCase):
 
     def setUp(self):
         print('setUp')
-        Blog.objects.create(id=1,title='test', content='content', summary='summary', create_time=datetime.now(), update_time=datetime.now())
+        Blog.objects.create(id=1,title='test', content='content', summary='summary')
 
     def test_create_blog(self):
         print('test_create_blog')
@@ -17,9 +17,7 @@ class BlogTest(APITestCase):
         data = {
             "title": "create",
             "content": "create content",
-            "summary": " create summary",
-            "create_time": datetime.now(),
-            "update_time": datetime.now()
+            "summary": " create summary"
         }
         response = self.client.post(url, data, format='json')
         res = response.json()
@@ -64,8 +62,6 @@ class BlogTest(APITestCase):
             "title": "update",
             "content": "update content",
             "summary": " update summary",
-            "create_time": datetime.now(),
-            "update_time": datetime.now()
         }
         response = self.client.put(url, data, format='json')
         res = response.json()
@@ -89,4 +85,4 @@ class BlogTest(APITestCase):
 
 
 
-    
+ 

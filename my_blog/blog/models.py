@@ -7,8 +7,8 @@ class Blog(models.Model):
     title = models.CharField(max_length=32, default="Title")
     content = models.TextField()
     summary = models.TextField()
-    create_time = models.DateTimeField()
-    update_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True)
     view_times = models.IntegerField(default=0)
     def __unicode__(self):
         return self.title
@@ -35,7 +35,7 @@ class Comments(models.Model):
     comment_id = models.IntegerField(default=0) #默认为0，表示他是一条评论; 当有comment_id值时，表示他是评论comment_id的留言,用于指明回复的对象。
     comment_username = models.CharField(max_length=32, null=True)  # 评论回复对象的用户名
     content = models.TextField()
-    create_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now=True)
     def __unicode__(self):
         return self.username
     
