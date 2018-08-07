@@ -1,15 +1,16 @@
+#coding:utf8
 from rest_framework import serializers
 from blog.models import Blog, Comments
 
 class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
-        fields = '__all__'
+        fields = ('title','content','summary','create_time','update_time','view_times')
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
-        fields = '__all__'
+        fields = ('username','userimage','blog_id','parent_id','comment_id','comment_username','content','create_time')
 
     def validate(self, data):
         '''
